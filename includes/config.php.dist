@@ -12,6 +12,3 @@ define('SMTP_USER', '');
 define('SMTP_PASSWORD', '');
 // URL for Website
 define('BASE_URL', 'http://reports.example.net');
-
-define('FIRSTKEY', '');
-define('SECONDKEY', '');
