@@ -90,7 +90,7 @@ CREATE TABLE `users` (
   `password` varchar(128) NOT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT 1,
   `registered` tinyint(1) NOT NULL DEFAULT 0,
-  `code` varchar(256) NOT NULL,
+  `code` varchar(256) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `enabled` (`enabled`)
