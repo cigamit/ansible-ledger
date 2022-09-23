@@ -30,7 +30,7 @@ CREATE TABLE `facts` (
   `host` int(11) NOT NULL,
   `fact` varchar(128) NOT NULL,
   `type` varchar(32) NOT NULL,
-  `data` text NOT NULL,
+  `data` text NULL,
   PRIMARY KEY (`host`,`fact`),
   KEY `host` (`host`),
   KEY `fact` (`fact`),
