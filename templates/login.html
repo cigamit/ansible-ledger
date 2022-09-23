@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ansible Reports</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+    <link href="/css/animate.min.css" rel="stylesheet">
+    <link href="/css/app.min.css" rel="stylesheet">
+    <link href="/css/scheduler.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+{% if error %}<font color=red><center>{{ error }}</center></font><br><br>{% endif %}
+{% if msg %}<font color=green><center>{{ msg }}</center></font><br><br>{% endif %}
+<div class="row d-flex justify-content-center">
+	<div class="col-6 bg-light rounded p-5 border position-absolute top-50 start-50 translate-middle">
+        <div class="row">
+            <div class="col-6">
+              	 <h2 class="font-bold">Ansible Reports</h2>
+         	      <p>
+    	               Please login with your email and password.
+                </p>
+            </div>
+         	  <div class="col-6">
+    	           <div class="ibox-content">
+                    <form class="m-t" role="form" action="/index.php" method=post enctype="multipart/form-data">
+              	         <div class="form-group">
+         	                  <input type="username" name=username class="form-control form-control-sm" placeholder="EMail" required="">
+    	                   </div>
+                        <div class="form-group">
+                        	   <input type="password" name=password class="form-control form-control-sm" placeholder="Password" required="">
+                   	    </div><br>
+					<div class="d-grid gap-2">
+						<button type="submit" class="btn btn-secondary btn-sm block full-width m-b">Login</button>
+					</div>
+         	              <a href="forgot_password.php" class="small text-decoration-none">
+    	                       Forgot password?
+                        </a>
+                   	</form>
+              	 </div>
+         	  </div>
+    	   </div>
+	</div>
+</div>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
+
+</html>

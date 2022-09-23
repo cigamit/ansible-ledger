@@ -1,0 +1,117 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="wrapper  text-bg-light">
+	<div class="container-fluid animated fadeInRight" style="background-color: #fff;">
+		<div class="bd-example">
+			<div class="bd-example" style="padding: 9px">
+				<div class="row filters">
+					<div class="col-1">
+						Host:
+					</div>
+					<div class="col-2">
+						<select name=hosts id=hosts>
+							<option></option>
+		{% for i,h in hosts %}
+							<option id="{{ i }}"{% if host == i %} selected{% endif %}>{{ h }}</option>
+		{% endfor %}
+						</select>
+					</div>
+					<div class="col-1">
+						Playbook:
+					</div>
+					<div class="col-4">
+						<select name=playbooks id=playbooks>
+							<option></option>
+		{% for p in playbooks %}
+							<option{% if playbook == p %} selected{% endif %}>{{ p }}</option>
+		{% endfor %}
+						</select>
+					</div>
+					<div class="col-1">
+						<a href=/changes.php><button type="button" class="btn btn-primary btn-xs">Clear</button></a>
+					</div>
+				</div>
+			</div>
+			<br><br>
+			<table class="table table-striped datatable-facts">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Date</th>
+						<th>Host</th>
+						<th>Playbook</th>
+						<th>Role</th>
+						<th>Task</th>
+						<th>Module</th>
+						<th style="display:none;">Changes</th>
+					</tr>
+					</thead>
+					<tbody>
+	{% for r in changes %}
+					<tr>
+						<td width=30><a href='{{ server }}?action=view&change={{ r['id'] }}' class="btn btn-primary btn-xs"  type="button" name=edit id=edit><i class="fa fa-eye"></i></a></td>
+						<td nowrap>{{ (r['time'] - 21600)|date("m/d/Y G:i") }}</td>
+						<td nowrap>{{ hosts[r['host']] }}</td>
+						<td>{{ r['playbook'] }}</td>
+						<td>{{ r['role'] }}</td>
+						<td>{{ r['task'] }}</td>
+						<td>{{ r['task_action'] }}</td>
+						<td style="display:none;">{{ r['res'] }}</td>
+					</tr>
+{% endfor %}
+				</tbody>
+			</table>
+
+		</div>
+	</div>
+</div>
+
+
+
+{% endblock %}
+{% block javascriptinc %}
+{% endblock %}
+{% block javascript %}
+
+	function change_filter () {
+		var host = $("#hosts").find(":selected").attr("id");
+		var playbook = $("#playbooks").find(":selected").val();
+		if (host == undefined) {
+			host = "";
+		}
+		if (playbook == undefined) {
+			playbook = "";
+		}
+		window.location = "/changes.php?host=" + host + "&playbook=" + playbook;
+	}
+
+	$("#hosts").change(change_filter);
+	$("#playbooks").change(change_filter);
+
+
+	$('.datatable-facts').DataTable({
+		order: [[1, 'desc']],
+		"columnDefs" : [{"targets":1, "type":"date-us"},{"targets":7, "visible":false}],
+		pageLength: 25,
+		responsive: true,
+		dom: '<"html5buttons"B>lTfgitp',
+		buttons: [
+			{ extend: 'copy'},
+			{extend: 'csv'},
+			{extend: 'excel', title: 'Pending'},
+			{extend: 'pdf', title: 'Pending'},
+
+			{extend: 'print',
+				customize: function (win){
+					$(win.document.body).addClass('white-bg');
+					$(win.document.body).css('font-size', '10px');
+
+					$(win.document.body).find('table')
+							.addClass('compact')
+							.css('font-size', 'inherit');
+			}
+			}
+		]
+	});
+{% endblock %}

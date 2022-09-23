@@ -1,0 +1,17 @@
+<?php
+
+$sql_user = 'reports';
+$sql_pass = '';
+
+define('FIRSTKEY','');
+define('SECONDKEY','');
+
+
+define('SMTP_SERVER', '');
+define('SMTP_USER', '');
+define('SMTP_PASSWORD', '');
+// URL for Website
+define('BASE_URL', 'http://reports.example.net');
+
+define('FIRSTKEY', '');
+define('SECONDKEY', '');

@@ -1,0 +1,110 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="wrapper  text-bg-light">
+	<div class="container-fluid animated fadeInRight" style="background-color: #fff;">
+		<div class="bd-example">
+			<div class="bd-example" style="padding: 9px">
+				<div class="row filters">
+					<div class="col-1">
+						Host:
+					</div>
+					<div class="col-2">
+						<select name=hosts id=hosts>
+							<option></option>
+		{% for i,h in hosts %}
+							<option id="{{ i }}"{% if host == i %} selected{% endif %}>{{ h }}</option>
+		{% endfor %}
+						</select>
+					</div>
+					<div class="col-1">
+						Fact:
+					</div>
+					<div class="col-4">
+						<select name=facts id=facts>
+							<option></option>
+		{% for f in ufacts %}
+							<option{% if fact == f %} selected{% endif %}>{{ f }}</option>
+		{% endfor %}
+						</select>
+					</div>
+					<div class="col-1">
+						<a href=/facts.php><button type="button" class="btn btn-primary btn-xs">Clear</button></a>
+					</div>
+				</div>
+			</div>
+			<br><br>
+			<table class="table table-striped datatable-changes">
+				<thead>
+					<tr>
+						<th>Host</th>
+						<th>Fact</th>
+						<th>Value</th>
+						<th>Type</th>
+					</tr>
+				</thead>
+				<tbody>
+{% for r in facts %}
+					<tr>
+						<td width=200 nowrap>{{ hosts[r['host']] }}</td>
+						<td nowrap>{{ r['fact'] }}</td>
+						<td>{{ r['data'] }}</td>
+						<td>{{ r['type'] }}</td>
+					</tr>
+{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+
+
+{% endblock %}
+{% block javascriptinc %}
+{% endblock %}
+{% block javascript %}
+
+	function change_filter () {
+		var host = $("#hosts").find(":selected").attr("id");
+		var fact = $("#facts").find(":selected").val();
+		if (host == undefined) {
+			host = "";
+		}
+		if (fact == undefined) {
+			fact = "";
+		}
+		window.location = "/facts.php?host=" + host + "&fact=" + fact;
+	}
+
+	$("#hosts").change(change_filter);
+	$("#facts").change(change_filter);
+
+
+
+	$('.datatable-changes').DataTable({
+		order: [[1, 'asc']],
+		"columnDefs" : [{"targets":1, "type":"date-us"}],
+		pageLength: 25,
+		responsive: true,
+		dom: '<"html5buttons"B>lTfgitp',
+		buttons: [
+			{ extend: 'copy'},
+			{extend: 'csv'},
+			{extend: 'excel', title: 'Pending'},
+			{extend: 'pdf', title: 'Pending'},
+
+			{extend: 'print',
+				customize: function (win){
+					$(win.document.body).addClass('white-bg');
+					$(win.document.body).css('font-size', '10px');
+
+					$(win.document.body).find('table')
+							.addClass('compact')
+							.css('font-size', 'inherit');
+			}
+			}
+		]
+
+	});
+{% endblock %}

@@ -1,0 +1,7 @@
+<tr>
+	<td width=30><a href='{{ server }}?action=edit&report={{ r['id'] }}' class="btn btn-primary btn-xs"  type="button" name=edit id=edit><i class="fa fa-edit"></i></a></td>
+	<td><a href='reports.php?action=view&report={{ r['id'] }}'>{{ r['name'] }}</a></td>
+	<td>{{ users[r['owner']] }}</td>
+	<td>{{ r['created']|date("m/d/Y H:i") }}</td>
+	<td width=30><a href='{{ server }}?action=delete&report={{ r['id'] }}' class="btn btn-danger btn-xs"  type="button" name=delete id=delete><i class="fa fa-trash"></i></a></td>
+</tr>

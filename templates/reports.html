@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<br><br>
+<div class="wrapper  text-bg-light">
+<div class="container-fluid animated fadeInRight" style="background-color: #fff;">
+	<div class="bd-example">
+		<table class="table table-striped datatable-reports border-secondary">
+	{% include 'parts/reports_table_thead.html' %}
+			<tbody>
+	{% for r in reports %}
+			{% include 'parts/reports_table_body_tr.html' %}
+	{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<br><a href=/reports.php?action=new><button type="button" class="btn btn-primary btn-s">Create New Report</button></a>
+</div>
+
+</div>
+
+{% endblock %}
+{% block javascriptinc %}
+{% endblock %}
+{% block javascript %}
+	$('.datatable-reports').DataTable({
+		order: [[1, 'asc']],
+		"columnDefs" : [{"targets":3, "type":"date-us"}],
+		pageLength: 25,
+		responsive: true,
+		dom: '<"html5buttons"B>lTfgitp',
+		buttons: [
+			{ extend: 'copy'},
+			{extend: 'csv'},
+			{extend: 'excel', title: 'Pending'},
+			{extend: 'pdf', title: 'Pending'},
+
+			{extend: 'print',
+				customize: function (win){
+					$(win.document.body).addClass('white-bg');
+					$(win.document.body).css('font-size', '10px');
+
+					$(win.document.body).find('table')
+							.addClass('compact')
+							.css('font-size', 'inherit');
+			}
+			}
+		]
+	});
+{% endblock %}
