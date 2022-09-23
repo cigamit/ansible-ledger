@@ -3,9 +3,6 @@
 /*
 	This file simply loads our vendor files and sets up our Twig environment
 */
-require_once 'vendor/autoload.php';
-include_once('includes/version.php');
-require_once 'includes/sql.php';
 
 $loader = new Twig_Loader_Filesystem('templates');
 
