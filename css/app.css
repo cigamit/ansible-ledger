@@ -11,7 +11,6 @@ body {
     font-size: 13px !important;
 }
 
-
 .nav-link {
     color: #fff !important;
     font-size: 16px !important;
@@ -30,4 +29,8 @@ body {
     font-size: 13px;
     line-height: 1.5;
     border-radius: 3px;
+}
+
+.filters {
+    font-size: 16px;
 }

@@ -1,27 +1,24 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<div class="wrapper  text-bg-light">
+<div class="wrapper text-bg-light">
 	<div class="container-fluid animated fadeInRight" style="background-color: #fff;">
 		<div class="bd-example">
 			<div class="bd-example" style="padding: 9px">
 				<div class="row filters">
-					<div class="col-1">
-						Host:
-					</div>
-					<div class="col-2">
-						<select name=hosts id=hosts>
+					<label for="hosts" class="col-sm-1 col-form-label">Hosts</label>
+					<div class="col">
+						<select class="form-control" name=hosts id=hosts>
 							<option></option>
 		{% for i,h in hosts %}
 							<option id="{{ i }}"{% if host == i %} selected{% endif %}>{{ h }}</option>
 		{% endfor %}
 						</select>
 					</div>
-					<div class="col-1">
-						Playbook:
-					</div>
-					<div class="col-4">
-						<select name=playbooks id=playbooks>
+					<label for="playbooks" class="col-sm-1 col-form-label">Playbooks</label>
+
+					<div class="col">
+						<select class="form-control" name=playbooks id=playbooks>
 							<option></option>
 		{% for p in playbooks %}
 							<option{% if playbook == p %} selected{% endif %}>{{ p }}</option>
@@ -29,7 +26,7 @@
 						</select>
 					</div>
 					<div class="col-1">
-						<a href=/changes.php><button type="button" class="btn btn-primary btn-xs">Clear</button></a>
+						<a href=/changes.php><button type="button" class="btn btn-primary btn-s">Clear</button></a>
 					</div>
 				</div>
 			</div>
@@ -59,7 +56,7 @@
 						<td>{{ r['task_action'] }}</td>
 						<td style="display:none;">{{ r['res'] }}</td>
 					</tr>
-{% endfor %}
+	{% endfor %}
 				</tbody>
 			</table>
 
