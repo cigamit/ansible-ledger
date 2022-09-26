@@ -6,22 +6,18 @@
 		<div class="bd-example">
 			<div class="bd-example" style="padding: 9px">
 				<div class="row filters">
-					<div class="col-1">
-						Host:
-					</div>
-					<div class="col-2">
-						<select name=hosts id=hosts>
+					<label for="hosts" class="col-sm-1 col-form-label text-end">Hosts</label>
+					<div class="col">
+						<select class="form-select form-select-sm" name=hosts id=hosts>
 							<option></option>
 		{% for i,h in hosts %}
 							<option id="{{ i }}"{% if host == i %} selected{% endif %}>{{ h }}</option>
 		{% endfor %}
 						</select>
 					</div>
-					<div class="col-1">
-						Fact:
-					</div>
-					<div class="col-4">
-						<select name=facts id=facts>
+					<label for="facts" class="col-sm-1 col-form-label text-end">Fact</label>
+					<div class="col">
+						<select class="form-select form-select-sm" name=facts id=facts>
 							<option></option>
 		{% for f in ufacts %}
 							<option{% if fact == f %} selected{% endif %}>{{ f }}</option>
@@ -29,7 +25,7 @@
 						</select>
 					</div>
 					<div class="col-1">
-						<a href=/facts.php><button type="button" class="btn btn-primary btn-xs">Clear</button></a>
+						<a href=/facts.php><button type="button" class="btn btn-primary btn-s">Clear</button></a>
 					</div>
 				</div>
 			</div>
