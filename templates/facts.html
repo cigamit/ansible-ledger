@@ -24,6 +24,15 @@
 		{% endfor %}
 						</select>
 					</div>
+					<label for="type" class="col-sm-1 col-form-label text-end">Type</label>
+					<div class="col">
+						<select class="form-select form-select-sm" name=type id=type>
+							<option></option>
+		{% for t in types %}
+							<option{% if type == t %} selected{% endif %}>{{ t }}</option>
+		{% endfor %}
+						</select>
+					</div>
 					<div class="col-1">
 						<a href=/facts.php><button type="button" class="btn btn-primary btn-s">Clear</button></a>
 					</div>
@@ -64,17 +73,23 @@
 	function change_filter () {
 		var host = $("#hosts").find(":selected").attr("id");
 		var fact = $("#facts").find(":selected").val();
+		var type = $("#type").find(":selected").val();
+
 		if (host == undefined) {
 			host = "";
 		}
 		if (fact == undefined) {
 			fact = "";
 		}
-		window.location = "/facts.php?host=" + host + "&fact=" + fact;
+		if (type == undefined) {
+			type = "";
+		}
+		window.location = "/facts.php?host=" + host + "&fact=" + fact + "&type=" + type;
 	}
 
 	$("#hosts").change(change_filter);
 	$("#facts").change(change_filter);
+	$("#type").change(change_filter);
 
 
 
