@@ -1,164 +1,145 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-		<div class="wrapper wrapper-content animated fadeInRight">
+		<div class="wrapper wrapper-content">
 			<div class="row">
+				<div class="col">
+					<div class="row bd-example">
+						<div class="col">
+							<label class="control-label">Report Name</label>
+						</div>
 
-				<div class="col-lg-6">
-					<div class="tab-content">
-						<div id="pending" class="tab-pane active">
-							<div class="panel-body">
-								<div class="ibox float-e-margins">
-									<div class="ibox-content">
-										<form method="post" action=reports.php id=nameform class="form-horizontal">
-											<input type=hidden name=action value=savename>
-											<input type=hidden name=report value={{ report.id }}>
-											<div class="form-group"><label class="col-sm-3 control-label">Report Name</label>
-												<div class="col-sm-8">
-													<input type="text" class="form-control form-control-sm" name=name id=name value='{{ report.name }}'>
-													<br>
-													<input type="submit" class="btn btn-primary btn-s" value=Save>
-												</div>
-											</div>
-										</form>
-									</div>
-								</div>
-							</div>
+						<div class="form-group col">
+							<form method="post" action=reports.php id=nameform class="form-horizontal">
+								<input type=hidden name=action value=savename>
+								<input type=hidden name=report value={{ report.id }}>
+								<input type="text" class="form-control form-control-sm" name=name id=name value='{{ report.name }}'>
+						</div>
+
+						<div class="col">
+								<input type="submit" class="btn btn-primary btn-s" value=Save>
+							</form>
 						</div>
 					</div>
 				</div>
 
-				<div class="col-lg-6">
-					<div class="tab-content">
-						<div id="pending" class="tab-pane active">
-							<div class="panel-body">
-								<div class="ibox float-e-margins">
-									<div class="ibox-content">
-
-											<form method="post" action=reports.php id=sortform class="form-horizontal">
-												<input type=hidden name=action value=savesort>
-												<input type=hidden name=report value={{ report.id }}>
-												<div class="row form-group"><label class="col-sm-3 control-label">Sort Field</label>
-													<div class="col">
-														<select class="form-control form-control-sm" name=sortc id=sortc>
-	{% set c = 0 %}
-	{% for d,k in columns %}
-															<option value={{ c }} {% if report.sortc == c %}selected{% endif %}>{{ d }}</option>
-	{% set c = c + 1 %}
-	{% endfor %}
-														</select>
-														<br><input type="submit" class="btn btn-primary btn-s" value=Save>
-													</div>
-													<div class="col">
-														<select class="form-control form-control-sm" name=sortd id=sortd>
-															<option value='asc' {% if report.sortd == 'asc' %}selected{% endif %}>ASC</option>
-															<option value='desc' {% if report.sortd == 'desc' %}selected{% endif %}>DESC</option>
-														</select>
-													</div>
-												</div>
-											</form>
-									</div>
-								</div>
-							</div>
+				<div class="col">
+					<div class="row bd-example">
+						<div class="col text-nowrap">
+							<label class="col-sm-3 control-label">Sort Field</label>
+						</div>
+						<div class="col">
+							<form method="post" action=reports.php id=sortform class="form-horizontal">
+								<input type=hidden name=action value=savesort>
+								<input type=hidden name=report value={{ report.id }}>
+								<select class="form-control form-control-sm" name=sortc id=sortc>
+{% set c = 0 %}
+{% for d,k in columns %}
+									<option value={{ c }} {% if report.sortc == c %}selected{% endif %}>{{ d }}</option>
+{% set c = c + 1 %}
+{% endfor %}
+								</select>
+						</div>
+						<div class="col">
+							<select class="form-control form-control-sm" name=sortd id=sortd>
+								<option value='asc' {% if report.sortd == 'asc' %}selected{% endif %}>ASC</option>
+								<option value='desc' {% if report.sortd == 'desc' %}selected{% endif %}>DESC</option>
+							</select>
+						</div>
+						<div class="col">
+							<input type="submit" class="btn btn-primary btn-s" value=Save>
+							</form>
 						</div>
 					</div>
 				</div>
-
-				<div class="col-lg-6">
-					<div class="tab-content">
-						<div id="pending" class="tab-pane active">
-							<div class="panel-body">
-								<div class="ibox float-e-margins">
-									<div class="ibox-content"><h3>Columns</h3>
-										<div class="table-responsive">
-											<table class="table table-striped datatable-columns">
-												<thead>
-													<tr>
-														<th>Fact</th>
-														<th>Display</th>
-														<th></th>
-													</tr>
-												</thead>
-												<tbody>
+			</div>
+<br>
+			<div class="row">
+				<div class="col">
+					<div class="row bd-example">
+						<div class="col">
+							<h3>Columns</h3>
+							<div class="table-responsive">
+								<table class="table table-striped datatable-columns">
+									<thead>
+										<tr>
+											<th>Fact</th>
+											<th>Display</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
 {% set c = 0 %}
 {% for d,f in columns %}
-													<tr>
-	{% if f is iterable %}
-														<td>
-		{% for v in f %}
-														{{ v }}<br>
-		{% endfor %}
-													</td>
-	{% else %}
-														<td>{{ f }}</td>
-	{% endif %}
-														<td>{{ d }}</td>
-														<td>
-	{% if c > 0 %}
-		<a href="{{ server }}?action=moveup&report={{ report['id'] }}&fact={{ c }}" class='btn btn-primary btn-xs' type='button' name=moveup id=moveup><i class="fa fa-chevron-up"></i></a>
-	{% else %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	{% endif %}
-	{% if c < (columns | length) - 1 %}
-		<a href="{{ server }}?action=movedown&report={{ report['id'] }}&fact={{ c }}" class='btn btn-primary btn-xs' type='button' name=movedown id=movedown><i class="fa fa-chevron-down"></i></a>
-	{% else %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	{% endif %}
-	<a href="{{ server }}?action=deletefact&report={{ report['id'] }}&fact={{ c }}" class='btn btn-primary btn-xs' type='button' name=deletefact id=deletefact><i class="fa fa-trash"></i></a>
-	{% set c = c + 1 %}
-
-														</td>
-													</tr>
+										<tr>
+{% if f is iterable %}
+											<td>
+{% for v in f %}
+											{{ v }}<br>
 {% endfor %}
-												</tbody>
-											</table>
-										</div>
-									</div>
-									<br><button class="btn btn-primary btn-s" type="button" name=columnmb id=columnmb data-bs-toggle="modal" data-bs-target="#columnmodal">Add Column</button>
-								</div>
+										</td>
+{% else %}
+											<td>{{ f }}</td>
+{% endif %}
+											<td>{{ d }}</td>
+											<td>
+{% if c > 0 %}
+												<a href="{{ server }}?action=moveup&report={{ report['id'] }}&fact={{ c }}" class='btn btn-primary btn-xs' type='button' name=moveup id=moveup><i class="fa fa-chevron-up"></i></a>
+{% else %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{% endif %}
+{% if c < (columns | length) - 1 %}
+												<a href="{{ server }}?action=movedown&report={{ report['id'] }}&fact={{ c }}" class='btn btn-primary btn-xs' type='button' name=movedown id=movedown><i class="fa fa-chevron-down"></i></a>
+{% else %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{% endif %}
+												<a href="{{ server }}?action=deletefact&report={{ report['id'] }}&fact={{ c }}" class='btn btn-primary btn-xs' type='button' name=deletefact id=deletefact><i class="fa fa-trash"></i></a>
+{% set c = c + 1 %}
+
+											</td>
+										</tr>
+{% endfor %}
+									</tbody>
+								</table>
+								<br>
+								<button class="btn btn-primary btn-s" type="button" name=columnmb id=columnmb data-bs-toggle="modal" data-bs-target="#columnmodal">Add Column</button>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="col-lg-6">
-					<div class="tab-content">
-						<div id="pending" class="tab-pane active">
-							<div class="panel-body">
-								<div class="ibox float-e-margins">
-									<div class="ibox-content"><h3>Filters</h3>
-										<div class="table-responsive">
-											<table class="table table-striped datatable-columns">
-												<thead>
-													<tr>
-														<th>Fact</th>
-														<th>Compare</th>
-														<th>Value</th>
-														<th></th>
-													</tr>
-												</thead>
-												<tbody>
+				<div class="col">
+					<div class="row bd-example">
+						<div class="col">
+							<h3>Filters</h3>
+							<div class="table-responsive">
+								<table class="table table-striped datatable-columns">
+									<thead>
+										<tr>
+											<th>Fact</th>
+											<th>Compare</th>
+											<th>Value</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
 {% set c = 0 %}
 {% for f in filters %}
-													<tr>
-														<td>{{ f.fact }}</td>
-														<td>{{ compares[f.compare] }}</td>
-														<td>{{ f.value }}</td>
-														<td>
-<a href="{{ server }}?action=deletefilter&report={{ report['id'] }}&filter={{ c }}" class='btn btn-primary btn-xs' type='button' name=deletefact id=deletefact><i class="fa fa-trash"></i></a>
-</td>
-													</tr>
-	{% set c = c + 1 %}
+										<tr>
+											<td>{{ f.fact }}</td>
+											<td>{{ compares[f.compare] }}</td>
+											<td>{{ f.value }}</td>
+											<td>
+												<a href="{{ server }}?action=deletefilter&report={{ report['id'] }}&filter={{ c }}" class='btn btn-primary btn-xs' type='button' name=deletefact id=deletefact><i class="fa fa-trash"></i></a>
+											</td>
+										</tr>
+{% set c = c + 1 %}
 {% endfor %}
-												</tbody>
-											</table>
-										</div>
-									</div>
-									<br><button class="btn btn-primary btn-s" type="button" name=filtermb id=filtermb data-bs-toggle="modal" data-bs-target="#filtermodal">Add Filter</button>
-								</div>
+									</tbody>
+								</table>
 							</div>
+							<br><button class="btn btn-primary btn-s" type="button" name=filtermb id=filtermb data-bs-toggle="modal" data-bs-target="#filtermodal">Add Filter</button>
 						</div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 
