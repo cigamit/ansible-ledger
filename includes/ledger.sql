@@ -95,3 +95,24 @@ CREATE TABLE `users` (
   UNIQUE KEY `username` (`username`),
   KEY `enabled` (`enabled`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `jobs`;
+CREATE TABLE `jobs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `job` int(11) NOT NULL,
+  `job_template_id` int(11) NOT NULL,
+  `timestamp` varchar(32) DEFAULT '',
+  `host` varchar(128) DEFAULT '',
+  `name` varchar(512) DEFAULT '',
+  `job_type` varchar(32) DEFAULT '',
+  `inventory` varchar(128) DEFAULT '',
+  `project` varchar(128) DEFAULT '',
+  `scm_branch` varchar(128) DEFAULT '',
+  `execution_environment` varchar(128) DEFAULT '',
+  `actor` varchar(64) DEFAULT '',
+  `limit` text DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `job` (`job`),
+  KEY `job_template_id` (`job_template_id`),
+  KEY `actor` (`actor`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

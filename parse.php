@@ -4,23 +4,24 @@ include_once('includes/classes/Spyc.php');
 use Async\Yaml;
 
 
-$data = file_get_contents('php://input');
-if ($data != '') {
-	$data = json_decode($data, true);
+$d = file_get_contents('php://input');
+if ($d != '') {
+	$d = json_decode($d, true);
 }
-//file_put_contents('data-all.txt', print_r($data, true), FILE_APPEND);
+//file_put_contents('data-all.txt', print_r($d, true), FILE_APPEND);
 
-if (isset($data['logger_name'])) {
-	switch ($data['logger_name']) {
+if (isset($d['logger_name'])) {
+	switch ($d['logger_name']) {
 		case 'awx.analytics.job_events':
-			if (isset($data['event_data']['res']['ansible_facts'])) {
-				if (isset($data['host_name'])) {
-					$f = $data['event_data']['res']['ansible_facts'];
-					$t = $data['event_data']['task_action'];
+			// JOB EVENT DATA
+			if (isset($d['event_data']['res']['ansible_facts'])) {
+				if (isset($d['host_name'])) {
+					$f = $d['event_data']['res']['ansible_facts'];
+					$t = $d['event_data']['task_action'];
 					$fs = parse_facts($f);
 					if (count($fs)) {
 						include_once('includes/sql.php');
-						$h = check_host($data['host_name']);
+						$h = check_host($d['host_name']);
 						if ($h) {
 							$s = 'INSERT INTO `facts` (`host`, `fact`, `data`, `type`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `data` = ?';
 							foreach ($fs as $k => $v) {
@@ -31,17 +32,33 @@ if (isset($data['logger_name'])) {
 				}
 			}
 
-			if (isset($data['changed']) && $data['changed'] && isset($data['job']) && $data['job'] && isset($data['event_data']['task_action']) && $data['event_data']['task_action'] != '') {
+			if (isset($d['changed']) && $d['changed'] && isset($d['job']) && $d['job'] && isset($d['event_data']['task_action']) && $d['event_data']['task_action'] != '') {
 				include_once('includes/sql.php');
 
-				$h = check_host($data['host_name']);
-				$role = (isset($data['role']) ? $data['role'] : '');
-				$res = Yaml::dumper($data['event_data']['res']);
+				$h = check_host($d['host_name']);
+				$role = (isset($d['role']) ? $d['role'] : '');
+				$res = Yaml::dumper($d['event_data']['res']);
 				db_execute_prepare('INSERT INTO `changes` (`tower`, `host`, `time`, `job`, `playbook`, `play`, `role`, `task`, `task_action`, `res`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-					array($_SERVER['REMOTE_ADDR'], $h, time(), $data['job'], $data['playbook'], $data['play'], $role, $data['task'], $data['event_data']['task_action'], $res));
+					array($_SERVER['REMOTE_ADDR'], $h, time(), $d['job'], $d['playbook'], $d['play'], $role, $d['task'], $d['event_data']['task_action'], $res));
 
-//file_put_contents('data.txt', print_r($data, true), FILE_APPEND);
+//file_put_contents('events.txt', print_r($d, true), FILE_APPEND);
 
+			}
+			break;
+		case 'awx.analytics.activity_stream':
+			// JOB DATA
+			if (isset($d['operation']) && $d['operation'] == 'create' && isset($d['object1']) && $d['object1'] == 'job') {
+				include_once('includes/sql.php');
+
+//file_put_contents('jobs.txt', print_r($d, true), FILE_APPEND);
+
+				db_execute_prepare('INSERT INTO `jobs` (`timestamp`, `job`, `job_template_id`, `host`, `name`, `job_type`, `inventory`, `project`, `scm_branch`, `execution_environment`, `actor`, `limit`) VALUES
+									(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+									array($d['@timestamp'], $d['changes']['id'], $d['summary_fields']['job_template'][0]['id'],
+										  $d['host'], $d['changes']['name'], $d['changes']['job_type'], $d['changes']['inventory'],
+										  $d['changes']['project'], $d['changes']['scm_branch'], $d['changes']['execution_environment'], 
+										  $d['actor'], $d['changes']['limit']
+										));
 			}
 			break;
 	}
