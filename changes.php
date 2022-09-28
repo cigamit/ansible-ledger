@@ -19,7 +19,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'view' && $_GET['change'] == in
 	}
 }
 
-$playbooks = reindex_col(db_fetch_assocs("SELECT UNIQUE `playbook` FROM `changes` ORDER BY `playbook` ASC"), 'playbook');
+$playbooks = reindex_col(db_fetch_assocs("SELECT DISTINCT `playbook` FROM `changes` ORDER BY `playbook` ASC"), 'playbook');
 $filters = array();
 $host = '';
 $playbook = '';
