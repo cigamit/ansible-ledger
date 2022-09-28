@@ -15,6 +15,7 @@
         "twig/twig": "~2.0",
         "composer/composer": "*",
         "composer-plugin-api": "*",
-        "phpmailer/phpmailer": "*"
+        "phpmailer/phpmailer": "*",
+        "sebastian/diff": "*"
     }
 }
