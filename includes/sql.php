@@ -31,7 +31,7 @@ if (!$db) {
 	exit;
 }
 
-#include_once('includes/db_upgrade.php');
+include_once('includes/db_upgrade.php');
 
 /**
  * Replaces specific characters in a string

@@ -1,6 +1,6 @@
 <?php
 
-$new_db_version = 0;
+$new_db_version = 2;
 
 $db_version = db_fetch_cell("SELECT `value` FROM settings WHERE `setting` = 'db_version'", 'value');
 if ($db_version == '') {
@@ -10,7 +10,7 @@ if ($db_version == '') {
 if ($new_db_version != $db_version) {
 	switch ($db_version) {
 		case 1:
-
+			db_execute('ALTER TABLE `changes` DROP `tower`');
 
 	}
 

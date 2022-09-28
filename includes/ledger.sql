@@ -6,7 +6,6 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 DROP TABLE IF EXISTS `changes`;
 CREATE TABLE `changes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tower` varchar(15) NOT NULL DEFAULT '',
   `host` int(11) NOT NULL,
   `time` int(11) NOT NULL,
   `job` int(11) NOT NULL,
