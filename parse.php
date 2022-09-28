@@ -38,8 +38,8 @@ if (isset($d['logger_name'])) {
 				$h = check_host($d['host_name']);
 				$role = (isset($d['role']) ? $d['role'] : '');
 				$res = Yaml::dumper($d['event_data']['res']);
-				db_execute_prepare('INSERT INTO `changes` (`tower`, `host`, `time`, `job`, `playbook`, `play`, `role`, `task`, `task_action`, `res`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-					array($_SERVER['REMOTE_ADDR'], $h, time(), $d['job'], $d['playbook'], $d['play'], $role, $d['task'], $d['event_data']['task_action'], $res));
+				db_execute_prepare('INSERT INTO `changes` (`host`, `time`, `job`, `playbook`, `play`, `role`, `task`, `task_action`, `res`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+					array($h, time(), $d['job'], $d['playbook'], $d['play'], $role, $d['task'], $d['event_data']['task_action'], $res));
 
 //file_put_contents('events.txt', print_r($d, true), FILE_APPEND);
 
