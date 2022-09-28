@@ -44,8 +44,8 @@
 		buttons: [
 			'copy',
 			'csv',
-			{extend: 'excel', title: 'Pending'},
-			{extend: 'pdf', title: 'Pending'},
+			{extend: 'excel', title: '{{ report.name }}'},
+			{extend: 'pdf', title: '{{ report.name }}'},
 			{extend: 'print',
 				customize: function (win){
 					$(win.document.body).addClass('white-bg');
