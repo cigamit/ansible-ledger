@@ -5,8 +5,8 @@
 			<div class="row">
 				<div class="col">
 					<div class="row bd-example">
-						<div class="col">
-							<label class="control-label">Report Name</label>
+						<div class="col-sm-2 text-nowrap">
+							<label class="col-form-label text-end">Report Name</label>
 						</div>
 
 						<div class="form-group col">
@@ -16,7 +16,7 @@
 								<input type="text" class="form-control form-control-sm" name=name id=name value='{{ report.name }}'>
 						</div>
 
-						<div class="col">
+						<div class="col-sm-2">
 								<input type="submit" class="btn btn-primary btn-s" value=Save>
 							</form>
 						</div>
@@ -25,8 +25,8 @@
 
 				<div class="col">
 					<div class="row bd-example">
-						<div class="col text-nowrap">
-							<label class="col-sm-3 control-label">Sort Field</label>
+						<div class="col-sm-2 text-nowrap">
+							<label class="col-form-label text-end">Sort Field</label>
 						</div>
 						<div class="col">
 							<form method="post" action=reports.php id=sortform class="form-horizontal">
@@ -40,13 +40,13 @@
 {% endfor %}
 								</select>
 						</div>
-						<div class="col">
+						<div class="col-sm-2">
 							<select class="form-control form-control-sm" name=sortd id=sortd>
 								<option value='asc' {% if report.sortd == 'asc' %}selected{% endif %}>ASC</option>
 								<option value='desc' {% if report.sortd == 'desc' %}selected{% endif %}>DESC</option>
 							</select>
 						</div>
-						<div class="col">
+						<div class="col-sm-2">
 							<input type="submit" class="btn btn-primary btn-s" value=Save>
 							</form>
 						</div>
