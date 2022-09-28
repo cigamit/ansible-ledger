@@ -10,7 +10,7 @@ if ($db_version == '') {
 if ($new_db_version != $db_version) {
 	switch ($db_version) {
 		case 1:
-			db_execute('ALTER TABLE `changes` DROP `tower`');
+			#db_execute('ALTER TABLE `changes` DROP `tower`');
 
 	}
 
