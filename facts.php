@@ -3,12 +3,9 @@
 include_once('includes/global.php');
 
 
-
-
-
 $hosts = reindex_arr_by_id(db_fetch_assocs("SELECT * FROM `hosts` ORDER BY `hostname`"));
-$ufacts = reindex_col(db_fetch_assocs("SELECT UNIQUE `fact` FROM `facts` ORDER BY `fact` ASC"), 'fact');
-$types = reindex_col(db_fetch_assocs("SELECT UNIQUE `type` FROM `facts` ORDER BY `type` ASC"), 'type');
+$ufacts = reindex_col(db_fetch_assocs("SELECT DISTINCT `fact` FROM `facts` ORDER BY `fact` ASC"), 'fact');
+$types = reindex_col(db_fetch_assocs("SELECT DISTINCT `type` FROM `facts` ORDER BY `type` ASC"), 'type');
 
 $filters = array();
 $host = '';
