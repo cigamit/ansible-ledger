@@ -37,6 +37,6 @@ if (!empty($filters)) {
 	$filters = '';
 }
 
-$facts = db_fetch_assocs("SELECT * FROM `facts` $filters ORDER BY `fact` ASC");
+$facts = db_fetch_assocs("SELECT * FROM `facts` $filters ORDER BY `fact` ASC" . ($filters == '' ? ' LIMIT 0,500' : ''));
 
 echo $twig->render('facts.html', array_merge($twigarr, array('types' => $types, 'type' => $type, 'facts' => $facts, 'ufacts' => $ufacts, 'hosts' => $h, 'host' => $host, 'fact' => $fact)));
