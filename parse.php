@@ -13,7 +13,7 @@ $d = file_get_contents('php://input');
 if ($d != '') {
 	$d = json_decode($d, true);
 }
-//file_put_contents('data-all.txt', print_r($d, true), FILE_APPEND);
+file_put_contents('data-all.txt', print_r($d, true), FILE_APPEND);
 
 if (isset($d['logger_name'])) {
 	switch ($d['logger_name']) {
@@ -43,24 +43,25 @@ if (isset($d['logger_name'])) {
 
 				if (isset($d['event_data']['res']['results'])) {
 					for ($r = 0; $r < count($d['event_data']['res']['results']); $r++) {
+						if (isset($d['event_data']['res']['results'][$r]['diff'])) {
+							for ($a = 0; $a < count($d['event_data']['res']['results'][$r]['diff']); $a++) {
+								if (isset($d['event_data']['res']['results'][$r]['diff'][$a]['before']) && isset($d['event_data']['res']['results'][$r]['diff'][$a]['after'])) {
+									$from = $to = (isset($d['event_data']['res']['results'][$r]['diff'][1]['before_header']) ? $d['event_data']['res']['results'][$r]['diff'][0]['before_header'] : null);
 
-						for ($a = 0; $a < count($d['event_data']['res']['results'][$r]['diff']); $a++) {
-							if (isset($d['event_data']['res']['results'][$r]['diff'][$a]['before']) && isset($d['event_data']['res']['results'][$r]['diff'][$a]['after'])) {
-								$from = $to = (isset($d['event_data']['res']['results'][$r]['diff'][1]['before_header']) ? $d['event_data']['res']['results'][$r]['diff'][0]['before_header'] : null);
+									$builder = new StrictUnifiedDiffOutputBuilder([
+										'collapseRanges'      => true, // ranges of length one are rendered with the trailing `,1`
+										'commonLineThreshold' => 6,    // number of same lines before ending a new hunk and creating a new one (if needed)
+										'contextLines'        => 3,    // like `diff:  -u, -U NUM, --unified[=NUM]`, for patch/git apply compatibility best to keep at least @ 3
+										'fromFile'            => $from,
+										'fromFileDate'        => null,
+										'toFile'              => $to,
+										'toFileDate'          => null,
+									]);
 
-								$builder = new StrictUnifiedDiffOutputBuilder([
-									'collapseRanges'      => true, // ranges of length one are rendered with the trailing `,1`
-									'commonLineThreshold' => 6,    // number of same lines before ending a new hunk and creating a new one (if needed)
-									'contextLines'        => 3,    // like `diff:  -u, -U NUM, --unified[=NUM]`, for patch/git apply compatibility best to keep at least @ 3
-									'fromFile'            => $from,
-									'fromFileDate'        => null,
-									'toFile'              => $to,
-									'toFileDate'          => null,
-								]);
-
-								$differ = new Differ($builder);
-								$diff = $differ->diff($d['event_data']['res']['results'][$r]['diff'][0]['before'], $d['event_data']['res']['results'][$r]['diff'][0]['after']);
-								$d['event_data']['res']['results'][$r]['diff'][$a] = color_diff($diff);
+									$differ = new Differ($builder);
+									$diff = $differ->diff($d['event_data']['res']['results'][$r]['diff'][0]['before'], $d['event_data']['res']['results'][$r]['diff'][0]['after']);
+									$d['event_data']['res']['results'][$r]['diff'][$a] = color_diff($diff);
+								}
 							}
 						}
 					}
@@ -100,13 +101,21 @@ if (isset($d['logger_name'])) {
 			if (isset($d['operation']) && $d['operation'] == 'create' && isset($d['object1']) && $d['object1'] == 'job') {
 				include_once('includes/sql.php');
 
-//file_put_contents('jobs.txt', print_r($d, true), FILE_APPEND);
+file_put_contents('jobs.txt', print_r($d, true), FILE_APPEND);
+
+				if (!isset($d['summary_fields']['job_template'][0]['id'])) {
+					// Older versions of Tower don't specify the job_template_id
+					$t = explode('-', $d['changes']['job_template']);
+					$jtid = $t[array_key_last($t)];
+				} else {
+					$jtid = $d['summary_fields']['job_template'][0]['id'];
+				}
 
 				db_execute_prepare('INSERT INTO `jobs` (`timestamp`, `job`, `job_template_id`, `host`, `name`, `job_type`, `inventory`, `project`, `scm_branch`, `execution_environment`, `actor`, `limit`) VALUES
 									(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-									array($d['@timestamp'], $d['changes']['id'], $d['summary_fields']['job_template'][0]['id'],
+									array($d['@timestamp'], $d['changes']['id'], $jtid,
 										  $d['host'], $d['changes']['name'], $d['changes']['job_type'], $d['changes']['inventory'],
-										  $d['changes']['project'], $d['changes']['scm_branch'], $d['changes']['execution_environment'], 
+										  $d['changes']['project'], $d['changes']['scm_branch'], (isset($d['changes']['execution_environment']) ? $d['changes']['execution_environment'] : ''), 
 										  $d['actor'], $d['changes']['limit']
 										));
 			}
