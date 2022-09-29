@@ -71,7 +71,7 @@
 {% endblock %}
 {% block javascript %}
 
-	$(".chosen-select").chosen({ allow_single_deselect:true });
+	$(".chosen-select").chosen({ allow_single_deselect:true, search_contains: true });
 
 	function change_filter () {
 		var host = $("#hosts").find(":selected").attr("id");
