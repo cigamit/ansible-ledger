@@ -13,7 +13,7 @@ $d = file_get_contents('php://input');
 if ($d != '') {
 	$d = json_decode($d, true);
 }
-file_put_contents('data-all.txt', print_r($d, true), FILE_APPEND);
+//file_put_contents('data-all.txt', print_r($d, true), FILE_APPEND);
 
 if (isset($d['logger_name'])) {
 	switch ($d['logger_name']) {
@@ -39,7 +39,7 @@ if (isset($d['logger_name'])) {
 
 			if (isset($d['changed']) && $d['changed'] && isset($d['event']) && $d['event'] == 'runner_on_ok' && isset($d['job']) && $d['job'] && isset($d['event_data']['task_action']) && $d['event_data']['task_action'] != '') {
 				include_once('includes/sql.php');
-		//file_put_contents('events.txt', print_r($d, true), FILE_APPEND);
+//		file_put_contents('events.txt', print_r($d, true), FILE_APPEND);
 
 				if (isset($d['event_data']['res']['results'])) {
 					for ($r = 0; $r < count($d['event_data']['res']['results']); $r++) {
@@ -101,7 +101,7 @@ if (isset($d['logger_name'])) {
 			if (isset($d['operation']) && $d['operation'] == 'create' && isset($d['object1']) && $d['object1'] == 'job') {
 				include_once('includes/sql.php');
 
-file_put_contents('jobs.txt', print_r($d, true), FILE_APPEND);
+//file_put_contents('jobs.txt', print_r($d, true), FILE_APPEND);
 
 				if (!isset($d['summary_fields']['job_template'][0]['id'])) {
 					// Older versions of Tower don't specify the job_template_id
