@@ -8,7 +8,7 @@
 				<div class="row filters">
 					<label for="hosts" class="col-sm-1 col-form-label text-end">Hosts</label>
 					<div class="col">
-						<select class="form-control form-select-sm" name=hosts id=hosts>
+						<select class="form-control form-select-sm chosen-select" name=hosts id=hosts>
 							<option></option>
 		{% for i,h in hosts %}
 							<option id="{{ i }}"{% if host == i %} selected{% endif %}>{{ h }}</option>
@@ -18,7 +18,7 @@
 					<label for="playbooks" class="col-sm-1 col-form-label text-end">Playbooks</label>
 
 					<div class="col">
-						<select class="form-control form-select-sm" name=playbooks id=playbooks>
+						<select class="form-control form-select-sm chosen-select" name=playbooks id=playbooks>
 							<option></option>
 		{% for p in playbooks %}
 							<option{% if playbook == p %} selected{% endif %}>{{ p }}</option>
@@ -70,6 +70,8 @@
 {% block javascriptinc %}
 {% endblock %}
 {% block javascript %}
+
+	$(".chosen-select").chosen({ allow_single_deselect:true });
 
 	function change_filter () {
 		var host = $("#hosts").find(":selected").attr("id");

@@ -1,5 +1,4 @@
 {% extends 'layout.html' %}
-
 {% block body %}
 		<div class="wrapper wrapper-content">
 			<div class="row">
@@ -32,7 +31,7 @@
 							<form method="post" action=reports.php id=sortform class="form-horizontal">
 								<input type=hidden name=action value=savesort>
 								<input type=hidden name=report value={{ report.id }}>
-								<select class="form-control form-control-sm" name=sortc id=sortc>
+								<select class="form-control  chosen-select" name=sortc id=sortc>
 {% set c = 0 %}
 {% for d,k in columns %}
 									<option value={{ c }} {% if report.sortc == c %}selected{% endif %}>{{ d }}</option>
@@ -161,7 +160,7 @@
 					</div>
 					<div class="form-group"><label class="col-sm-3 control-label">Facts</label>
 					    <div class="col-sm-8">
-							<select multiple class="form-control" name=facts[] id=facts size=20 style="width:100%; overflow-x:auto;">
+							<select multiple class="form-control chosen-select" name=facts[] id=facts size=20 style="width:100%; overflow-x:auto;">
 								{% for f in facts %}
 					        	<option>{{ f }}</option>
 								{% endfor %}
@@ -192,7 +191,7 @@
 
 			<div class="form-group"><label class="col-sm-3 control-label">Fact</label>
 			    <div class="col-sm-8">
-				<select class="form-control" name=fact id=facts>
+				<select class="form-control chosen-select" name=fact id=facts>
 			{% for f in facts %}
 			        <option>{{ f }}</option>
 			{% endfor %}
@@ -232,4 +231,5 @@
 {% block javascriptinc %}
 {% endblock %}
 {% block javascript %}
+$(".chosen-select").chosen();
 {% endblock %}

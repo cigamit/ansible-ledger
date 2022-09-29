@@ -8,7 +8,7 @@
 				<div class="row filters">
 					<label for="hosts" class="col-sm-1 col-form-label text-end">Hosts</label>
 					<div class="col">
-						<select class="form-select form-select-sm" name=hosts id=hosts>
+						<select class="form-select form-select-sm chosen-select" name=hosts id=hosts>
 							<option></option>
 		{% for i,h in hosts %}
 							<option id="{{ i }}"{% if host == i %} selected{% endif %}>{{ h }}</option>
@@ -17,7 +17,7 @@
 					</div>
 					<label for="facts" class="col-sm-1 col-form-label text-end">Fact</label>
 					<div class="col">
-						<select class="form-select form-select-sm" name=facts id=facts>
+						<select class="form-select form-select-sm chosen-select" name=facts id=facts>
 							<option></option>
 		{% for f in ufacts %}
 							<option{% if fact == f %} selected{% endif %}>{{ f }}</option>
@@ -26,7 +26,7 @@
 					</div>
 					<label for="type" class="col-sm-1 col-form-label text-end">Type</label>
 					<div class="col">
-						<select class="form-select form-select-sm" name=type id=type>
+						<select class="form-select form-select-sm chosen-select" name=type id=type>
 							<option></option>
 		{% for t in types %}
 							<option{% if type == t %} selected{% endif %}>{{ t }}</option>
@@ -69,6 +69,8 @@
 {% block javascriptinc %}
 {% endblock %}
 {% block javascript %}
+
+	$(".chosen-select").chosen({ allow_single_deselect:true });
 
 	function change_filter () {
 		var host = $("#hosts").find(":selected").attr("id");

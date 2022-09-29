@@ -34,3 +34,7 @@ body {
 .filters {
     font-size: 15px;
 }
+
+.chosen-container {
+    min-width: 100%;
+}
