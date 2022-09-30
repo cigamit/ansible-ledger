@@ -3,20 +3,19 @@
 {% block body %}
 <br><br>
 <div class="wrapper  text-bg-light">
-<div class="container-fluid animated fadeInRight" style="background-color: #fff;">
-	<div class="bd-example">
-		<table class="table table-striped datatable-reports border-secondary">
-	{% include 'parts/reports_table_thead.html' %}
-			<tbody>
-	{% for r in reports %}
-			{% include 'parts/reports_table_body_tr.html' %}
-	{% endfor %}
-			</tbody>
-		</table>
+	<div class="container-fluid animated fadeInRight" style="background-color: #fff;">
+		<div class="bd-example">
+			<table class="table table-striped datatable-reports border-secondary">
+		{% include 'parts/reports_table_thead.html' %}
+				<tbody>
+		{% for r in reports %}
+				{% include 'parts/reports_table_body_tr.html' %}
+		{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<br><a href=/reports.php?action=new><button type="button" class="btn btn-primary btn-s">Create New Report</button></a>
 	</div>
-	<br><a href=/reports.php?action=new><button type="button" class="btn btn-primary btn-s">Create New Report</button></a>
-</div>
-
 </div>
 
 {% endblock %}
