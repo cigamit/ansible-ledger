@@ -22,6 +22,16 @@
 {% block javascriptinc %}
 {% endblock %}
 {% block javascript %}
+	var classname = document.getElementsByClassName("dltlink");
+	for (var i = 0; i < classname.length; i++) {
+		classname[i].addEventListener('click',
+			function(event) {
+				var t = confirm("Are you sure you want to delete this Report?");
+				if (!t) {
+					event.preventDefault();
+				}
+			}, false);
+	}
 	$('.datatable-reports').DataTable({
 		order: [[1, 'asc']],
 		"columnDefs" : [{"targets":3, "type":"date-us"}],
