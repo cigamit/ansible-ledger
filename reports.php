@@ -6,7 +6,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && $_GET['report'] == 
 	if ($report->id) {
 		$report->delete();
 	}
-	Header("Location: /reports.php\n\n");
+	Header("Location: /reports/\n\n");
 	exit;
 }
 
@@ -16,10 +16,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'new') {
 	$report->set_created(time());
 	$report->set_name('New Report - ' . $account['name']);
 	$report->save();
-	Header("Location: reports.php?action=edit&report=" . intval($report->id) . "\n\n");
+	Header("Location: /reports/edit/" . intval($report->id) . "\n\n");
 	exit;
 }
-
 
 if (isset($_POST['action']) && $_POST['action'] == 'savesort' && $_POST['report'] == intval($_POST['report']) && intval($_POST['report'])) {
 	$report = new Report(intval($_POST['report']));
@@ -29,7 +28,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'savesort' && $_POST['report'
 		$report->set_sortc($sortc);
 		$report->set_sortd($sortd);
 		$report->save();
-		Header("Location: reports.php?action=edit&report=" . intval($_POST['report']) . "\n\n");
+		Header("Location: /reports/edit/" . intval($_POST['report']) . "\n\n");
 		exit;
 	}
 }
@@ -40,7 +39,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'savename' && $_POST['report'
 		$name = sql_clean_ans($_POST['name']);
 		$report->set_name($name);
 		$report->save();
-		Header("Location: reports.php?action=edit&report=" . intval($_POST['report']) . "\n\n");
+		Header("Location: /reports/edit/" . intval($_POST['report']) . "\n\n");
 		exit;
 	}
 }
@@ -50,7 +49,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'deletefilter' && $_GET['report
 	if ($report->id) {
 		$filter = intval($_GET['filter']);
 		$report->remove_filter($filter);
-		Header("Location: reports.php?action=edit&report=" . intval($_GET['report']) . "\n\n");
+		Header("Location: /reports/edit/" . intval($_GET['report']) . "\n\n");
 		exit;
 	}
 }
@@ -63,7 +62,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'addfilter' && $_POST['report
 		$compare = $_POST['compare'];
 		$fact = $_POST['fact'];
 		$report->add_filter($fact, $compare, $value);
-		Header("Location: reports.php?action=edit&report=" . intval($_POST['report']) . "\n\n");
+		Header("Location: /reports/edit/" . intval($_POST['report']) . "\n\n");
 		exit;
 	}
 }
@@ -73,7 +72,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'moveup' && $_GET['report'] == 
 	if ($report->id) {
 		$fact = intval($_GET['fact']);
 		$report->move_column_up($fact);
-		Header("Location: reports.php?action=edit&report=" . intval($_GET['report']) . "\n\n");
+		Header("Location: /reports/edit/" . intval($_GET['report']) . "\n\n");
 		exit;
 	}
 }
@@ -83,7 +82,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'movedown' && $_GET['report'] =
 	if ($report->id) {
 		$fact = intval($_GET['fact']);
 		$report->move_column_down($fact);
-		Header("Location: reports.php?action=edit&report=" . intval($_GET['report']) . "\n\n");
+		Header("Location: /reports/edit/" . intval($_GET['report']) . "\n\n");
 		exit;
 	}
 }
@@ -93,7 +92,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'deletefact' && $_GET['report']
 	if ($report->id) {
 		$fact = intval($_GET['fact']);
 		$report->remove_column($fact);
-		Header("Location: reports.php?action=edit&report=" . intval($_GET['report']) . "\n\n");
+		Header("Location: /reports/edit/" . intval($_GET['report']) . "\n\n");
 		exit;
 	}
 }
@@ -106,7 +105,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'addcolumn' && $_POST['report
 			$facts = (isset($_POST['facts']) ? $_POST['facts'] : array());
 			$report->add_column($display, $facts);
 		}
-		Header("Location: reports.php?action=edit&report=" . intval($_POST['report']) . "\n\n");
+		Header("Location: /reports/edit/" . intval($_POST['report']) . "\n\n");
 		exit;
 	}
 }
@@ -177,7 +176,7 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'view' && $_REQUEST['re
 		exit;
 	} else {
 
-		Header("Location: reports.php\n\n");
+		Header("Location: /reports/\n\n");
 		exit;
 	}
 }

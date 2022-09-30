@@ -34,7 +34,7 @@
 						</select>
 					</div>
 					<div class="col-1">
-						<a href=/facts.php><button type="button" class="btn btn-primary btn-s">Clear</button></a>
+						<a href=/facts/><button type="button" class="btn btn-primary btn-s">Clear</button></a>
 					</div>
 				</div>
 			</div>
@@ -86,14 +86,12 @@
 		if (type == undefined) {
 			type = "";
 		}
-		window.location = "/facts.php?host=" + host + "&fact=" + fact + "&type=" + type;
+		window.location = "/facts/?host=" + host + "&fact=" + fact + "&type=" + type;
 	}
 
 	$("#hosts").change(change_filter);
 	$("#facts").change(change_filter);
 	$("#type").change(change_filter);
-
-
 
 	$('.datatable-changes').DataTable({
 		order: [[1, 'asc']],

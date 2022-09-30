@@ -19,7 +19,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save') {
 		$user->set_code('');
 		$user->save();
 	}
-	Header("Location: account.php\n\n");
+	Header("Location: /account/\n\n");
 	exit;
 }
 

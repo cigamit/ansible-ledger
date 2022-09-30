@@ -26,7 +26,7 @@
 						</select>
 					</div>
 					<div class="col-1">
-						<a href=/changes.php><button type="button" class="btn btn-primary btn-s">Clear</button></a>
+						<a href=/changes/><button type="button" class="btn btn-primary btn-s">Clear</button></a>
 					</div>
 				</div>
 			</div>
@@ -47,7 +47,7 @@
 					<tbody>
 	{% for r in changes %}
 					<tr>
-						<td width=30><a href='{{ server }}?action=view&change={{ r['id'] }}' class="btn btn-primary btn-xs"  type="button" name=edit id=edit><i class="fa fa-eye"></i></a></td>
+						<td width=30><a href='/changes/view/{{ r['id'] }}' class="btn btn-primary btn-xs"  type="button" name=edit id=edit><i class="fa fa-eye"></i></a></td>
 						<td nowrap>{{ (r['time'] - 21600)|date("m/d/Y G:i") }}</td>
 						<td nowrap>{{ hosts[r['host']] }}</td>
 						<td>{{ r['playbook'] }}</td>
@@ -82,7 +82,7 @@
 		if (playbook == undefined) {
 			playbook = "";
 		}
-		window.location = "/changes.php?host=" + host + "&playbook=" + playbook;
+		window.location = "/changes/?host=" + host + "&playbook=" + playbook;
 	}
 
 	$("#hosts").change(change_filter);

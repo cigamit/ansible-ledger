@@ -10,5 +10,5 @@ unset($_SESSION['auth']);
 unset($_SESSION['username']);
 session_destroy();
 
-Header("Location: /index.php\n\n");
+Header("Location: /\n\n");
 exit;
