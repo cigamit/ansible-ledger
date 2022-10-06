@@ -5,14 +5,11 @@ $changes_retention = read_setting('changes_retention', 30);
 $facts_retention = read_setting('facts_retention', 30);
 $hosts_retention = read_setting('hosts_retention', 30);
 
-if (isset($_POST['action']) && $_POST['action'] == 'save') {
-    print "test";
-    exit;
+if (isset($_GET['action']) && $_GET['action'] == 'save') {
 	$changes_retention = intval($_POST['changes_retention']);
     $facts_retention = intval($_POST['facts_retention']);
     $hosts_retention = intval($_POST['hosts_retention']);
-    print_r($hosts_retention);
-    exit;
+
     db_execute_prepare('UPDATE `settings` SET `value` = ? WHERE `setting` = ?', array($changes_retention, 'changes_retention'));
     db_execute_prepare('UPDATE `settings` SET `value` = ? WHERE `setting` = ?', array($facts_retention, 'facts_retention'));
     db_execute_prepare('UPDATE `settings` SET `value` = ? WHERE `setting` = ?', array($hosts_retention, 'hosts_retention'));
