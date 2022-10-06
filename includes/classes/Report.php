@@ -182,6 +182,8 @@ class Report {
 			$id = db_execute_prepare('INSERT INTO `reports` (`owner`, `name`, `created`, `filters`, `columns`, `sortc`, `sortd`) VALUES (?, ?, ?, ?, ?, ?, ?)',
 						array($this->owner, $this->name, $this->created,  base64_encode(serialize($this->filters)),base64_encode(serialize($this->columns)), $this->sortc, $this->sortd));
 			$this->id = $id;
+			db_execute_prepare('INSERT INTO `reports_perms` (`report`, `user`, `role`) VALUES (?, ?, ?)',
+						array($this->id, $this->owner, 'owner'));
 		}
 	}
 }
