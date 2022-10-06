@@ -83,8 +83,13 @@ DROP TABLE IF EXISTS `reports_perms`;
 CREATE TABLE `reports_perms` (
   `report` int(11) NOT NULL,
   `user` int(11) NOT NULL,
+  `role` varchar(16) NOT NULL DEFAULT 'view',
   PRIMARY KEY (`report`,`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `reports_perms` (`report`, `user`, `role`) VALUES
+(1,	1,	'owner'),
+(2,	1,	'owner');
 
 INSERT INTO `reports` (`id`, `owner`, `name`, `created`, `filters`, `columns`, `sortc`, `sortd`) VALUES
 (1,	1,	'Linux Servers',	1663558186,	'YToxOntpOjA7YTozOntzOjQ6ImZhY3QiO3M6MTQ6ImFuc2libGVfc3lzdGVtIjtzOjc6ImNvbXBhcmUiO3M6MjoiZXEiO3M6NToidmFsdWUiO3M6NToiTGludXgiO319',	'YTo3OntzOjg6Ikhvc3RuYW1lIjtzOjE2OiJhbnNpYmxlX2hvc3RuYW1lIjtzOjEwOiJJUCBBZGRyZXNzIjtzOjI4OiJhbnNpYmxlX2RlZmF1bHRfaXB2NC5hZGRyZXNzIjtzOjY6IkRpc3RybyI7czoyMDoiYW5zaWJsZV9kaXN0cmlidXRpb24iO3M6MTQ6IkRpc3RybyBWZXJzaW9uIjtzOjI4OiJhbnNpYmxlX2Rpc3RyaWJ1dGlvbl92ZXJzaW9uIjtzOjE0OiJQeXRob24gVmVyc2lvbiI7czoyMjoiYW5zaWJsZV9weXRob25fdmVyc2lvbiI7czo0OiJDUFVzIjtzOjIzOiJhbnNpYmxlX3Byb2Nlc3Nvcl92Y3B1cyI7czo2OiJNZW1vcnkiO3M6MTk6ImFuc2libGVfbWVtdG90YWxfbWIiO30=',	0,	'asc'),
