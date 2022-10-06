@@ -4,8 +4,7 @@
 <div class="wrapper text-bg-light">
 	<div class="container-fluid animated fadeInRight" style="background-color: #fff;">
 		<div class="bd-example col-sm-3">
-			<form method="post" action=/settings/ id=saform class="form-horizontal">
-					<input type=hidden name=action value=save>
+			<form method="post" action=/settings/save/ id=settingform class="form-horizontal">
 					<div class="mb-3 form-control-lg">
 						<label class="form-label">DB Version</label>
 						<div>
@@ -22,6 +21,26 @@
 						<label class="form-label">Is Development Site</label>
 						<div class="form-check form-switch">
 							<input type="checkbox" class="form-check-input" name=is_dev id=is_dev {% if settings.is_dev %}checked{% endif %}>
+						</div>
+					</div>
+					<div class="mb-3 form-control-lg">
+						<label class="form-label">Hosts Retention (Days)</label>
+						<div>
+							<select class="form-control" name=hosts_retension id=hosts_retension>
+								{% for i in range(30, 360, 30) %}
+								<option{% if settings.hosts_retension == i %} selected{% endif %}>{{ i }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="mb-3 form-control-lg">
+						<label class="form-label">Facts Retention (Days)</label>
+						<div>
+							<select class="form-control" name=facts_retension id=facts_retension>
+								{% for i in range(30, 360, 30) %}
+								<option{% if settings.facts_retension == i %} selected{% endif %}>{{ i }}</option>
+								{% endfor %}
+							</select>
 						</div>
 					</div>
 					<div class="mb-3 form-control-lg">
