@@ -11,8 +11,9 @@ $twig = new Twig_Environment($loader, array('debug' => true));
 /*
 	We pass in the account variable automatically since we use it in most templates
 */
-$is_dev = read_setting('is_dev');
-$disable_email = read_setting('disable_email');
+$is_dev = read_setting('is_dev', 0);
+$disable_email = read_setting('disable_email', 0);
+
 $imp = (isset($_SESSION['imp']) && intval($_SESSION['imp']) ? $_SESSION['imp'] : 0); 
 // REMOVE ME
 $is_dev = true;
