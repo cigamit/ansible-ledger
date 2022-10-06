@@ -32,10 +32,15 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit') {
 if (isset($_GET['action']) && $_GET['action'] == 'save') {
     if ($user->id) {
         if (isset($_POST['name'])) {
-            $name = $user->clean_name($_POST['name']);
-            if ($name != $user->name) {
-                $user->set_name($name);
-            }
+            $user->set_name($user->clean_name($_POST['name']));
+        }
+
+        if (isset($_POST['username'])) {
+            $user->set_username($user->clean_username($_POST['username']));
+        }
+
+        if (isset($_POST['email'])) {
+            $user->set_email($user->clean_username($_POST['email']));
         }
 
         if (isset($_POST['enabled'])) {
