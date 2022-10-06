@@ -28,7 +28,8 @@ CREATE TABLE `facts` (
   `host` int(11) NOT NULL,
   `fact` varchar(128) NOT NULL,
   `type` varchar(32) NOT NULL,
-  `data` text NULL,
+  `data` text DEFAULT NULL,
+  `time` int(11) DEFAULT NULL,
   PRIMARY KEY (`host`,`fact`),
   KEY `host` (`host`),
   KEY `fact` (`fact`),
@@ -60,6 +61,7 @@ DROP TABLE IF EXISTS `hosts`;
 CREATE TABLE `hosts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `hostname` varchar(128) NOT NULL,
+  `time` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `hostname` (`hostname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

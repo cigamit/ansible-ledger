@@ -14,7 +14,7 @@ if ($d != '') {
 	$d = json_decode($d, true);
 }
 //file_put_contents('data-all.txt', print_r($d, true), FILE_APPEND);
-
+$time = time();
 if (isset($d['logger_name'])) {
 	switch ($d['logger_name']) {
 		case 'awx.analytics.job_events':
@@ -28,9 +28,9 @@ if (isset($d['logger_name'])) {
 						include_once('includes/sql.php');
 						$h = check_host($d['host_name']);
 						if ($h) {
-							$s = 'INSERT INTO `facts` (`host`, `fact`, `data`, `type`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `data` = ?';
+							$s = 'INSERT INTO `facts` (`host`, `fact`, `data`, `type`, `time`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `data` = ?, `time` = ?';
 							foreach ($fs as $k => $v) {
-								db_execute_prepare($s, array($h, $k, $v, $t, $v));
+								db_execute_prepare($s, array($h, $k, $v, $t, $time, $v, $time));
 							}
 						}
 					}
@@ -159,10 +159,12 @@ function parse_facts ($f, $fs = array(), $n = '') {
 
 function check_host ($host) {
 	$h = db_fetch_assoc_prepare('SELECT id FROM hosts WHERE hostname = ?', array(strtolower($host)));
+	$time = time();
 	if (isset($h['id'])) {
+		$h = db_execute_prepare('UPDATE `hosts` SET `time` = ? WHERE `id` = ?', array($time, $h['id']));
 		return $h['id'];
 	} else {
-		$h = db_execute_prepare('INSERT INTO `hosts` (`hostname`) VALUES (?)', array(strtolower($host)));
+		$h = db_execute_prepare('INSERT INTO `hosts` (`hostname`, `time`) VALUES (?, ?)', array(strtolower($host), $time));
 		return $h;
 	}
 }
