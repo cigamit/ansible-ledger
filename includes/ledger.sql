@@ -93,6 +93,7 @@ CREATE TABLE `users` (
   `enabled` tinyint(1) NOT NULL DEFAULT 1,
   `registered` tinyint(1) NOT NULL DEFAULT 0,
   `code` varchar(256) NOT NULL DEFAULT '',
+  `super` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   KEY `enabled` (`enabled`)
