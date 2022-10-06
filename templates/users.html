@@ -12,7 +12,9 @@
 						<th>Username</th>
 						<th>Email</th>
 						<th>Enabled</th>
+						<th style="display:none;"></th>
 						<th>Admin</th>
+						<th style="display:none;"></th>
 						<th></th>
 					</tr>
 				</thead>
@@ -20,15 +22,17 @@
 {% for u in users %}
 					<tr>
 						<td width="30">
-                            <a href='/users/edit/{{ r['id'] }}' class="btn btn-primary btn-xs"  type="button" name=edit id=edit><i class="fa fa-edit"></i></a>
+                            <a href='/users/edit/{{ u['id'] }}' class="btn btn-primary btn-xs"  type="button" name=edit id=edit><i class="fa fa-edit"></i></a>
                         </td>
 						<td nowrap>{{ u.name }}</td>
 						<td nowrap>{{ u.username }}</td>
 						<td>{{ u.email }}</td>
 						<td>{% if u.enabled %}Yes{% else %}No{% endif %}</td>
+						<td style="display:none;">{% if u.enabled %}Enabled{% else %}Disabled{% endif %}</td>
 						<td>{% if u.super %}Yes{% else %}No{% endif %}</td>
+						<td style="display:none;">{% if u.super %}Admin{% else %}User{% endif %}</td>
 						<td width="30">
-                            <a href='/users/delete/{{ r['id'] }}' class="btn btn-danger btn-xs dltlink"  type="button" name=delete id=delete><i class="fa fa-trash"></i></a>
+                            <a href='/users/delete/{{ u['id'] }}' class="btn btn-danger btn-xs dltlink"  type="button" name=delete id=delete><i class="fa fa-trash"></i></a>
                         </td>
 					</tr>
 {% endfor %}

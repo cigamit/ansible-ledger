@@ -9,6 +9,7 @@ class User {
 	var $enabled = 1;
 	var $registered = 0;
 	var $code = '';
+	var $super = '';
 
 	function __construct($id = 0) {
 		if ($id) {
@@ -54,15 +55,23 @@ class User {
 		$this->email = $this->clean_username($email);
 	}
 
+	function set_super($super) {
+		$this->super = $super;
+	}
+
+	function set_enabled($enabled) {
+		$this->enabled = $enabled;
+	}
+
 	function clean_name($text) {
-		return preg_replace('/[^A-Za-z ]/', '', $text);
+		return preg_replace('/[^A-Za-z\- ]/', '', $text);
 	}
 
 	function clean_username($text) {
 		return preg_replace('/[^A-Za-z0-9\.@\-\+]/', '', $text);
 	}
 
-       function pop_class($u) {
+	function pop_class($u) {
 		if (isset($u['id'])) {
 			$this->id = $u['id'];
 			$this->registered = $u['registered'];
@@ -72,16 +81,24 @@ class User {
 			$this->username = $u['username'];
 			$this->password = $u['password'];
 			$this->code = $u['code'];
+			$this->super = $u['super'];
 		}
+	}
+
+	function delete() {
+		db_execute_prepare('DELETE FROM `reports_perms` WHERE `user` = ?', array($this->id));
+		db_execute_prepare('DELETE FROM `reports` WHERE `owner` = ?', array($this->id));
+		db_execute_prepare('DELETE FROM `users` WHERE `id` = ?', array($this->id));
+		db_execute_prepare('DELETE FROM `sessions` WHERE `user` = ?', array($this->id));
 	}
 
 	function save() {
 		if ($this->id) {
-			db_execute_prepare('UPDATE `users` SET `name` = ?, `email` = ?, `username` = ?, `password` = ?, `enabled` = ?, `registered` = ?, `code` = ? WHERE `id` = ?',
-						array($this->name, $this->email, $this->username, $this->password, $this->enabled, $this->registered, $this->code, $this->id));
+			db_execute_prepare('UPDATE `users` SET `name` = ?, `email` = ?, `username` = ?, `password` = ?, `enabled` = ?, `registered` = ?, `code` = ?, `super` = ? WHERE `id` = ?',
+						array($this->name, $this->email, $this->username, $this->password, $this->enabled, $this->registered, $this->code, $this->super, $this->id));
 		} else {
-			db_execute_prepare('INSERT INTO `users` (`name`, `email`, `username`, `password`, `enabled`, `registered`, `code`) VALUES (?, ?, ?, ?, ?, ?, ?)',
-						array($this->name, $this->email, $this->username, $this->password, $this->enabled, $this->registered, $this->code));
+			db_execute_prepare('INSERT INTO `users` (`name`, `email`, `username`, `password`, `enabled`, `registered`, `code`, `super`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+						array($this->name, $this->email, $this->username, $this->password, $this->enabled, $this->registered, $this->code, $this->super));
 		}
 	}
 }
