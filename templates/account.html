@@ -5,12 +5,12 @@
 <div class="wrapper  text-bg-light">
 	<div class="container-fluid animated fadeInRight" style="background-color: #fff;">
 		<div class="bd-example">
-			<form method="post" action=/account/ id=saform class="form-horizontal">
+			<form method="post" action=/account/ id=saform class="form-horizontal" enctype="multipart/form-data">
 				<input type=hidden name=action value=save>
 				<div class="mb-3">
 					<label class="col-sm-3 form-label">Name</label>
 					<div class="col-sm-8">
-						<input type="text" class="form-control" name=name id=name value='{{ account.name }}'>
+						<input type="text" class="form-control" name=name id=name value='{{ name }}'>
 					</div>
 				</div>
 				<div class="mb-3">
@@ -28,7 +28,21 @@
 				</div>
 {% endif %}
 				<div class="mb-3">
-					<label class="col-sm-3 form-label">Change Password</label>
+					<label class="col-sm-3 form-label">Current Password</label>
+					<div class="col-sm-4">
+						<input type="password" class="form-control" name=cpass id=cpass value=''>
+					</div>
+					<div name=entercurrent id=entercurrent style="display: none;">
+						<font color=red>You must enter your current Password to change your password</font>
+					</div>
+{% if error == "current" %}
+					<div>
+						<font color=red>Your current password was incorrect!</font>
+					</div>
+{% endif %}
+				</div>
+				<div class="mb-3">
+					<label class="col-sm-3 form-label">New Password</label>
 					<div class="col-sm-4">
 						<input type="password" class="form-control" name=newpass id=newpass value=''>
 						<div name=passmatch id=passmin style="display: none;">
@@ -63,6 +77,15 @@
 	function check_pass () {
 		var p1 = $("#newpass").val();
 		var p2 = $("#newpass2").val();
+		var p3 = $("#cpass").val();
+
+		if (p1.length > 0 && p3.length < 1) {
+			$("#entercurrent").show();
+			$("#save").prop('disabled', true);
+		} else {
+			$("#entercurrent").hide();
+			$("#save").prop('disabled', false);
+		}
 
 		if (p1.length < 8) {
 			$("#passmin").show();
@@ -84,6 +107,7 @@
 
 	$('#newpass').change(check_pass);
 	$('#newpass2').change(check_pass);
+	$('#cpass').change(check_pass);
 
 	var options2 = {};
 	options2.ui = {

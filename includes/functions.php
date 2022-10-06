@@ -56,7 +56,7 @@ include_once('includes/templates.php');
 */
 function op_check() {
 	global $account;
-	if ($account['operator'] == 0) {
+	if ($account['super'] == 0) {
 		Header("Location: /index.php\n\n");
 		exit;	
 	}

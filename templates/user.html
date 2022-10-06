@@ -5,7 +5,7 @@
 <div class="wrapper text-bg-light">
 	<div class="container-fluid animated fadeInRight" style="background-color: #fff;">
 		<div class="bd-example">
-			<form method="post" action=/users/save/{{ user.id }} id=saform class="form-horizontal">
+			<form method="post" action=/users/save/{{ user.id }} id=saform class="form-horizontal" enctype="multipart/form-data">
 				<input type=hidden name=action value=save>
 				<div class="mb-3">
                     <label for="name" class="col-sm-3 form-label">Name</label>
