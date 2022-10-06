@@ -33,6 +33,9 @@ body {
 
 .filters {
     font-size: 15px;
+    white-space: nowrap;
+    overflow: visible;
+    width: 100%;
 }
 
 .chosen-container {
