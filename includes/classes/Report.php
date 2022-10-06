@@ -9,6 +9,7 @@ class Report {
 	var $columns = array('Hostname' => 'ansible_hostname');
 	var $sortc = 0;
 	var $sortd = 'asc';
+	var $role = '';
 
 	function __construct($id = 0) {
 		if ($id) {
@@ -17,7 +18,11 @@ class Report {
    	}
 
 	function retrieve($id) {
-		$u = db_fetch_assoc_prepare('SELECT * FROM `reports` WHERE id = ?', array($id));
+		global $account;
+		$u = db_fetch_assoc_prepare("SELECT `reports`.*, `reports_perms`.`role` FROM `reports`
+							LEFT JOIN `reports_perms` ON `reports_perms`.`report` = `reports`.`id`
+							WHERE `reports_perms`.`user` = ? AND `reports`.`id` = ?
+							ORDER BY `reports`.`name`", array($account['id'], $id));
 		$this->pop_class($u);
 		return $u;
 	}
@@ -54,17 +59,17 @@ class Report {
 		}
 	}
 
-       function pop_class($u) {
+	function pop_class($u) {
 		if (isset($u['id'])) {
-			$this->id = $u['id'];
-			$this->owner = $u['owner'];
-			$this->name = $u['name'];
-
+			$this->id      = $u['id'];
+			$this->owner   = $u['owner'];
+			$this->name    = $u['name'];
 			$this->created = $u['created'];
 			$this->filters = unserialize(base64_decode($u['filters']));
 			$this->columns = unserialize(base64_decode($u['columns']));
-			$this->sortc = $u['sortc'];
-			$this->sortd = $u['sortd'];
+			$this->sortc   = $u['sortc'];
+			$this->sortd   = $u['sortd'];
+			$this->role    = $u['role'];
 		}
 	}
 
@@ -171,7 +176,13 @@ class Report {
 	}
 
 	function delete() {
-		db_execute_prepare('DELETE FROM `reports` WHERE `id` = ?', array($this->id));
+		if ($role == "owner" || $role == "admin") {
+			db_execute_prepare('DELETE FROM `reports_perms` WHERE `report` = ?', array($this->id));
+			db_execute_prepare('DELETE FROM `reports` WHERE `id` = ?', array($this->id));
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	function save() {

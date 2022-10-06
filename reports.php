@@ -181,15 +181,12 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'view' && $_REQUEST['re
 	}
 }
 
-$reports = db_fetch_assocs("SELECT * FROM reports ORDER BY `name`");
+$reports = db_fetch_assocs_prepare("SELECT `reports`.*, `reports_perms`.`role` FROM `reports`
+							LEFT JOIN `reports_perms` ON `reports_perms`.`report` = `reports`.`id`
+							WHERE `reports_perms`.`user` = ?
+							ORDER BY `reports`.`name`", array($account['id']));
 
-$users = array();
-$usersa = db_fetch_assocs('SELECT id, name FROM users');
-
-foreach ($usersa as $u) {
-	$users[$u['id']] = $u['name'];
-}
-
+$users = reindex_arr_by_id_col(db_fetch_assocs('SELECT `id`, `name` FROM `users`'), 'name');
 
 echo $twig->render('reports.html', array_merge($twigarr, array('reports' => $reports, 'users' => $users, 'compares' => $compares)));
 
