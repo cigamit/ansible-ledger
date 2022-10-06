@@ -41,41 +41,28 @@
                     <span class="fs-6 d-none d-sm-inline ps-1">{{ account.name }}</span>
                 </a>
                 <br><br>
-                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                <ul class="nav flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                     <li>
-                        <a href="/reports/" class="nav-link px-0 align-middle">
+                        <a href="/reports/" class="nav-link px-0 align-middle{% if server == '/reports.php' %} active{%endif %}">
                             <i class="fa fa-table"></i> <span class="ms-1 d-none d-sm-inline">Reports</span> </a>
                     </li>
                     <li>
-                        <a href="/changes/" class="nav-link px-0 align-middle">
+                        <a href="/changes/" class="nav-link px-0 align-middle{% if server == '/changes.php' %} active{%endif %}">
                             <i class="fa fa-file"></i> <span class="ms-1 d-none d-sm-inline">Changes</span></a>
                     </li>
                     <li>
-                        <a href="/facts/" class="nav-link px-0 align-middle ">
+                        <a href="/facts/" class="nav-link px-0 align-middle{% if server == '/facts.php' %} active{%endif %}">
                             <i class="fa fa-puzzle-piece"></i> <span class="ms-1 d-none d-sm-inline">Facts</span></a>
                     </li>
-{% if account.operator > 0 %}
+{% if account.super %}
                     <li>
-                        <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <i class="fs-4 bi-grid"></i> <span class="ms-1 d-none d-sm-inline">Products</span> </a>
-                            <ul class="collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
+                        <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle" aria-expanded="true">
+                            <i class="fa fa-cog"></i> <span class="ms-1 d-none d-sm-inline">Admin</span> </a>
+                            <ul class="{% if server != '/users.php' %}collapse {%endif %} nav flex-column ms-4" id="submenu3" data-bs-parent="#menu">
                             <li class="w-100">
-                                <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Product</span> 1</a>
-                            </li>
-                            <li>
-                                <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Product</span> 2</a>
-                            </li>
-                            <li>
-                                <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Product</span> 3</a>
-                            </li>
-                            <li>
-                                <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Product</span> 4</a>
+                                <a href="/users/" class="nav-link px-0{% if server == '/users.php' %} active{%endif %}"> <i class="fa fa-user"></i> <span class="d-none d-sm-inline">Users</span> </a>
                             </li>
                         </ul>
-                    </li>
-                    <li>
-                        <a href="/facts.php" class="nav-link px-0 align-middle ">
-                            <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">Users</span></a>
                     </li>
 {% endif %}
 <br><br>

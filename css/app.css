@@ -38,3 +38,7 @@ body {
 .chosen-container {
     min-width: 100%;
 }
+
+.nav-link.active {
+    font-weight: bold;
+}
