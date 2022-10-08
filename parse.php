@@ -1,5 +1,8 @@
 <?php
 
+// We don't include sql.php at the top, so that we don't create a DB connection when receiving data
+// that we don't need
+
 include_once('includes/classes/Spyc.php');
 
 use Async\Yaml;
@@ -44,6 +47,7 @@ if (isset($d['logger_name'])) {
 
 		//file_put_contents('events.txt', print_r($d, true), FILE_APPEND);
 
+				// Results are in an array (this task had a loop)
 				if (isset($d['event_data']['res']['results'])) {
 					for ($r = 0; $r < count($d['event_data']['res']['results']); $r++) {
 						if ($remove_invocation && isset($d['event_data']['res']['results'][$r]['invocation'])) {
@@ -62,14 +66,15 @@ if (isset($d['logger_name'])) {
 					}
 				}
 
+				// Results are not in an array (no loop)
 				if (isset($d['event_data']['res']['diff'])) {
+					if ($remove_invocation && isset($d['event_data']['res']['invocation'])) {
+						unset($d['event_data']['res']['invocation']);
+					}
 					if (isset($d['event_data']['res']['invocation']['module_args'])) {
 						$d['event_data']['res']['invocation']['module_args'] = clean_null_args($d['event_data']['res']['invocation']['module_args']);
 					}
 					for ($a = 0; $a < count($d['event_data']['res']['diff']); $a++) {
-						if ($remove_invocation && isset($d['event_data']['res']['invocation'])) {
-							unset($d['event_data']['res']['invocation']);
-						}
 						if (isset($d['event_data']['res']['diff'][$a]['before']) && isset($d['event_data']['res']['diff'][$a]['after'])) {
 							$d['event_data']['res']['diff'][$a] = create_diff($d['event_data']['res']['diff']);
 						}
