@@ -89,6 +89,17 @@ if (isset($d['logger_name'])) {
 					}
 				}
 
+				if (isset($d['event_data']['res']['invocation']['module_args'])) {
+					$inv = $d['event_data']['res']['invocation']['module_args'];
+					$ninv = array();
+					foreach ($inv as $k => $i) {
+						if (!is_null($i)) {
+							$ninv[$k] = $i;
+						}
+					}
+					$d['event_data']['res']['invocation']['module_args'] = $ninv;
+				}
+
 				$h = check_host($d['host_name']);
 				$role = (isset($d['role']) ? $d['role'] : '');
 				$res = Yaml::dumper($d['event_data']['res']);
@@ -161,7 +172,7 @@ function check_host ($host) {
 	$h = db_fetch_assoc_prepare('SELECT id FROM hosts WHERE hostname = ?', array(strtolower($host)));
 	$time = time();
 	if (isset($h['id'])) {
-		$h = db_execute_prepare('UPDATE `hosts` SET `time` = ? WHERE `id` = ?', array($time, $h['id']));
+		db_execute_prepare('UPDATE `hosts` SET `time` = ? WHERE `id` = ?', array($time, $h['id']));
 		return $h['id'];
 	} else {
 		$h = db_execute_prepare('INSERT INTO `hosts` (`hostname`, `time`) VALUES (?, ?)', array(strtolower($host), $time));
