@@ -1,7 +1,6 @@
 # To Do
 
 ## Parser
-- Add setting to remove "invocation" and "_ansible_delegated_vars"
 - Add setting so we only receive data from Trusted Servers
 
 ## Reports
