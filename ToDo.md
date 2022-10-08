@@ -19,3 +19,5 @@
 
 ## Users
 - Add Teams
+- Invite New Users
+- New Users should be sent a token, which then locks them to Profile page until they change their password
