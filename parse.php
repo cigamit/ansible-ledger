@@ -42,6 +42,8 @@ if (isset($d['logger_name'])) {
 				include_once('includes/sql.php');
 				$remove_invocation = read_setting('remove_invocation', 0);
 
+		//file_put_contents('events.txt', print_r($d, true), FILE_APPEND);
+
 				if (isset($d['event_data']['res']['results'])) {
 					for ($r = 0; $r < count($d['event_data']['res']['results']); $r++) {
 						if ($remove_invocation && isset($d['event_data']['res']['results'][$r]['invocation'])) {
