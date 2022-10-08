@@ -2,31 +2,31 @@
 
 {% block body %}
 <div class="wrapper text-bg-light">
-	<div class="container-fluid animated fadeInRight" style="background-color: #fff;">
+	<div class="container-fluid animated fadeInRight" style="background-color: #fff; width: 50%">
 		<div class="bd-example">
 			<form method="post" action=/users/save/{{ user.id }} id=saform class="form-horizontal" enctype="multipart/form-data">
 				<input type=hidden name=action value=save>
 				<div class="mb-3">
                     <label for="name" class="col-sm-3 form-label">Name</label>
-					<div class="col-sm-4">
+					<div class="col">
                         <input type="text" class="form-control" name=name id=name value='{{ user.name }}'>
                     </div>
 				</div>
 				<div class="mb-3">
                     <label for="username" class="col-sm-3 form-label">Username</label>
-					<div class="col-sm-4">
+					<div class="col">
                         <input type="text" class="form-control" name=username id=username value='{{ user.username }}'>
                     </div>
 				</div>
 				<div class="mb-3">
                     <label for="email" class="col-sm-3 form-label">Email</label>
-					<div class="col-sm-4">
+					<div class="col">
                         <input type="text" class="form-control" name=email id=email value='{{ user.email }}'>
                     </div>
 				</div>
 				<div class="mb-3">
                     <label for="type" class="col-sm-3 form-label">Enabled</label>
-					<div class="col-sm-4">
+					<div class="col">
                         <select class="form-control" name=enabled id=enabled>
 							<option value="1">Yes</option>
 							<option value="0"{% if not user.enabled %} selected{% endif %}>No</option>
@@ -35,7 +35,7 @@
 				</div>
 				<div class="mb-3">
                     <label for="type" class="col-sm-3 form-label">Type</label>
-					<div class="col-sm-4">
+					<div class="col">
                         <select class="form-control" name=super id=super>
 							<option value="0">Standard</option>
 							<option value="1"{% if user.super %} selected{% endif %}>Admin</option>

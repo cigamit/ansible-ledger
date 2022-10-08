@@ -5,30 +5,40 @@
 	<div class="container-fluid animated fadeInRight" style="background-color: #fff;">
 		<div class="bd-example">
 			<div class="bd-example" style="padding: 9px">
-				<div class="row filters">
-					<label for="hosts" class="col-sm-1 col-form-label text-end">Hosts</label>
-					<div class="col">
-						<select class="form-control form-select-sm chosen-select" name=hosts id=hosts>
-							<option></option>
-		{% for i,h in hosts %}
-							<option id="{{ i }}"{% if host == i %} selected{% endif %}>{{ h }}</option>
-		{% endfor %}
-						</select>
-					</div>
-					<label for="playbooks" class="col-sm-1 col-form-label text-end">Playbooks</label>
+				<form action="/changes/">
+					<div class="row filters">
 
-					<div class="col">
-						<select class="form-control form-select-sm chosen-select" name=playbooks id=playbooks>
-							<option></option>
-		{% for p in playbooks %}
-							<option{% if playbook == p %} selected{% endif %}>{{ p }}</option>
-		{% endfor %}
-						</select>
+						<label for="hosts" class="col-sm-1 col-form-label text-end">Hosts</label>
+						<div class="col">
+							<select class="form-control form-select-sm chosen-select" name=hosts id=hosts>
+								<option></option>
+			{% for i,h in hosts %}
+								<option id="{{ i }}"{% if host == i %} selected{% endif %}>{{ h }}</option>
+			{% endfor %}
+							</select>
+						</div>
+
+						<label for="playbooks" class="col-sm-1 col-form-label text-end">Playbooks</label>
+						<div class="col">
+							<select class="form-control form-select-sm chosen-select" name=playbooks id=playbooks>
+								<option></option>
+			{% for p in playbooks %}
+								<option{% if playbook == p %} selected{% endif %}>{{ p }}</option>
+			{% endfor %}
+							</select>
+						</div>
+
+						<label for="csearch" class="col-sm-1 col-form-label text-end">Search</label>
+						<div class="col">
+							<input type="text" class="form-control form-control-sm" name=csearch id=csearch value="{{ csearch }}">
+						</div>
+						<div class="col">
+							<a href=/changes/?clear=1><button type="button" class="btn btn-primary btn-s">Clear</button></a>
+							<input type="submit" style="display: none" />
+						</div>
 					</div>
-					<div class="col">
-						<a href=/changes/><button type="button" class="btn btn-primary btn-s">Clear</button></a>
-					</div>
-				</div>
+				</form>
+
 			</div>
 			<br><br>
 			<table class="table table-striped datatable-facts">
@@ -73,20 +83,24 @@
 
 	$(".chosen-select").chosen({ allow_single_deselect:true, search_contains: true });
 
-	function change_filter () {
+	function change_host_filter () {
 		var host = $("#hosts").find(":selected").attr("id");
-		var playbook = $("#playbooks").find(":selected").val();
 		if (host == undefined) {
 			host = "";
 		}
+		window.location = "/changes/?host=" + host;
+	}
+
+	function change_playbook_filter () {
+		var playbook = $("#playbooks").find(":selected").val();
 		if (playbook == undefined) {
 			playbook = "";
 		}
-		window.location = "/changes/?host=" + host + "&playbook=" + playbook;
+		window.location = "/changes/?playbook=" + playbook;
 	}
 
-	$("#hosts").change(change_filter);
-	$("#playbooks").change(change_filter);
+	$("#hosts").change(change_host_filter);
+	$("#playbooks").change(change_playbook_filter);
 
 
 	$('.datatable-facts').DataTable({

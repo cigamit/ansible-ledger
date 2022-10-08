@@ -23,16 +23,61 @@ $playbooks = reindex_col(db_fetch_assocs("SELECT DISTINCT `playbook` FROM `chang
 $filters = array();
 $host = '';
 $playbook = '';
+$csearch = '';
 
-
-if (isset($_GET['host']) && intval($_GET['host']) == $_GET['host'] && isset($hosts[$_GET['host']])) {
-	$host = intval($_GET['host']);
-	$filters[] = " `host` = $host";
+if (isset($_GET['clear'])) {
+	unset($_SESSION['changes_host']);
+	unset($_SESSION['changes_playbook']);
+	unset($_SESSION['changes_csearch']);
+	header("Location: /changes/");
+	exit;
 }
 
-if (isset($_GET['playbook']) && in_array($_GET['playbook'], $playbooks)) {
-	$playbook = $_GET['playbook'];
-	$filters[] = " `playbook` = '$playbook'";
+if (isset($_GET['host'])) {
+	if (intval($_GET['host']) == $_GET['host'] && isset($hosts[$_GET['host']])) {
+		$_SESSION['changes_host'] = intval($_GET['host']);
+	} else {
+		unset($_SESSION['changes_host']);
+	}
+	header("Location: /changes/");
+	exit;
+}
+
+if (isset($_GET['playbook'])) {
+	if (in_array($_GET['playbook'], $playbooks)) {
+		$_SESSION['changes_playbook'] = $_GET['playbook'];
+	} else {
+		unset($_SESSION['changes_playbook']);
+	}
+	header("Location: /changes/");
+	exit;
+}
+
+if (isset($_GET['csearch'])) {
+	if ($_GET['csearch'] == '') {
+		unset($_SESSION['changes_csearch']);
+	} else {
+		$_SESSION['changes_csearch'] = sql_clean_ans($_GET['csearch']);
+	}
+	header("Location: /changes/");
+	exit;
+}
+
+// Create filters
+if (isset($_SESSION['changes_host']) && $_SESSION['changes_host'] != '') {
+	$filters[] = " `host` = " . $_SESSION['changes_host'];
+	$host = $_SESSION['changes_host'];
+}
+
+if (isset($_SESSION['changes_playbook']) && $_SESSION['changes_playbook'] != '') {
+	$filters[] = " `playbook` = '" . $_SESSION['changes_playbook'] . "'";
+	$playbook = $_SESSION['changes_playbook'];
+}
+
+if (isset($_SESSION['changes_csearch']) && $_SESSION['changes_csearch'] != '') {
+	$s = $_SESSION['changes_csearch'];
+	$filters[] = " `res` LIKE '%$s%' OR `task` LIKE '%$s%' OR `role` LIKE '%$s%' OR `play` LIKE '%$s%'";
+	$csearch = $_SESSION['changes_csearch'];
 }
 
 if (!empty($filters)) {
@@ -46,7 +91,7 @@ $changes = db_fetch_assocs("SELECT * FROM `changes` $filters ORDER BY `time` DES
 
 
 
-echo $twig->render('changes.html', array_merge($twigarr, array('changes' => $changes, 'hosts' => $h, 'playbooks' => $playbooks, 'host' => $host, 'playbook' => $playbook)));
+echo $twig->render('changes.html', array_merge($twigarr, array('changes' => $changes, 'hosts' => $h, 'playbooks' => $playbooks, 'host' => $host, 'playbook' => $playbook, 'csearch' => $csearch)));
 
 
 
