@@ -9,6 +9,7 @@ use SebastianBergmann\Diff\Differ;
 use SebastianBergmann\Diff\Output\StrictUnifiedDiffOutputBuilder;
 
 
+
 $d = file_get_contents('php://input');
 if ($d != '') {
 	$d = json_decode($d, true);
@@ -39,28 +40,20 @@ if (isset($d['logger_name'])) {
 
 			if (isset($d['changed']) && $d['changed'] && isset($d['event']) && $d['event'] == 'runner_on_ok' && isset($d['job']) && $d['job'] && isset($d['event_data']['task_action']) && $d['event_data']['task_action'] != '') {
 				include_once('includes/sql.php');
-//		file_put_contents('events.txt', print_r($d, true), FILE_APPEND);
+				$remove_invocation = read_setting('remove_invocation', 0);
 
 				if (isset($d['event_data']['res']['results'])) {
 					for ($r = 0; $r < count($d['event_data']['res']['results']); $r++) {
+						if ($remove_invocation && isset($d['event_data']['res']['results'][$r]['invocation'])) {
+							unset($d['event_data']['res']['results'][$r]['invocation']);
+						}
+						if (isset($d['event_data']['res']['results'][$r]['invocation']['module_args'])) {
+							$d['event_data']['res']['results'][$r]['invocation']['module_args'] = clean_null_args($d['event_data']['res']['results'][$r]['invocation']['module_args']);
+						}
 						if (isset($d['event_data']['res']['results'][$r]['diff'])) {
 							for ($a = 0; $a < count($d['event_data']['res']['results'][$r]['diff']); $a++) {
 								if (isset($d['event_data']['res']['results'][$r]['diff'][$a]['before']) && isset($d['event_data']['res']['results'][$r]['diff'][$a]['after'])) {
-									$from = $to = (isset($d['event_data']['res']['results'][$r]['diff'][1]['before_header']) ? $d['event_data']['res']['results'][$r]['diff'][0]['before_header'] : null);
-
-									$builder = new StrictUnifiedDiffOutputBuilder([
-										'collapseRanges'      => true, // ranges of length one are rendered with the trailing `,1`
-										'commonLineThreshold' => 6,    // number of same lines before ending a new hunk and creating a new one (if needed)
-										'contextLines'        => 3,    // like `diff:  -u, -U NUM, --unified[=NUM]`, for patch/git apply compatibility best to keep at least @ 3
-										'fromFile'            => $from,
-										'fromFileDate'        => null,
-										'toFile'              => $to,
-										'toFileDate'          => null,
-									]);
-
-									$differ = new Differ($builder);
-									$diff = $differ->diff($d['event_data']['res']['results'][$r]['diff'][0]['before'], $d['event_data']['res']['results'][$r]['diff'][0]['after']);
-									$d['event_data']['res']['results'][$r]['diff'][$a] = color_diff($diff);
+									$d['event_data']['res']['results'][$r]['diff'][$a] = create_diff($d['event_data']['res']['results'][$r]['diff']);
 								}
 							}
 						}
@@ -68,36 +61,17 @@ if (isset($d['logger_name'])) {
 				}
 
 				if (isset($d['event_data']['res']['diff'])) {
+					if (isset($d['event_data']['res']['invocation']['module_args'])) {
+						$d['event_data']['res']['invocation']['module_args'] = clean_null_args($d['event_data']['res']['invocation']['module_args']);
+					}
 					for ($a = 0; $a < count($d['event_data']['res']['diff']); $a++) {
+						if ($remove_invocation && isset($d['event_data']['res']['invocation'])) {
+							unset($d['event_data']['res']['invocation']);
+						}
 						if (isset($d['event_data']['res']['diff'][$a]['before']) && isset($d['event_data']['res']['diff'][$a]['after'])) {
-							$from = $to = (isset($d['event_data']['res']['diff'][1]['before_header']) ? $d['event_data']['res']['diff'][0]['before_header'] : null);
-
-							$builder = new StrictUnifiedDiffOutputBuilder([
-								'collapseRanges'      => true, // ranges of length one are rendered with the trailing `,1`
-								'commonLineThreshold' => 6,    // number of same lines before ending a new hunk and creating a new one (if needed)
-								'contextLines'        => 3,    // like `diff:  -u, -U NUM, --unified[=NUM]`, for patch/git apply compatibility best to keep at least @ 3
-								'fromFile'            => $from,
-								'fromFileDate'        => null,
-								'toFile'              => $to,
-								'toFileDate'          => null,
-							]);
-
-							$differ = new Differ($builder);
-							$diff = $differ->diff($d['event_data']['res']['diff'][0]['before'], $d['event_data']['res']['diff'][0]['after']);
-							$d['event_data']['res']['diff'][$a] = color_diff($diff);
+							$d['event_data']['res']['diff'][$a] = create_diff($d['event_data']['res']['diff']);
 						}
 					}
-				}
-
-				if (isset($d['event_data']['res']['invocation']['module_args'])) {
-					$inv = $d['event_data']['res']['invocation']['module_args'];
-					$ninv = array();
-					foreach ($inv as $k => $i) {
-						if (!is_null($i)) {
-							$ninv[$k] = $i;
-						}
-					}
-					$d['event_data']['res']['invocation']['module_args'] = $ninv;
 				}
 
 				$h = check_host($d['host_name']);
@@ -132,6 +106,34 @@ if (isset($d['logger_name'])) {
 			}
 			break;
 	}
+}
+
+function clean_null_args($inv) {
+	$ninv = array();
+	foreach ($inv as $k => $i) {
+		if (!is_null($i)) {
+			$ninv[$k] = $i;
+		}
+	}
+	return $ninv;
+}
+
+function create_diff($res) {
+	$from = $to = (isset($res[1]['before_header']) ? $res[1]['before_header'] : '');
+
+	$builder = new StrictUnifiedDiffOutputBuilder([
+		'collapseRanges'      => true, // ranges of length one are rendered with the trailing `,1`
+		'commonLineThreshold' => 6,    // number of same lines before ending a new hunk and creating a new one (if needed)
+		'contextLines'        => 3,    // like `diff:  -u, -U NUM, --unified[=NUM]`, for patch/git apply compatibility best to keep at least @ 3
+		'fromFile'            => $from,
+		'fromFileDate'        => null,
+		'toFile'              => $to,
+		'toFileDate'          => null,
+	]);
+
+	$differ = new Differ($builder);
+	$diff = $differ->diff($res[0]['before'], $res[0]['after']);
+	return color_diff($diff);
 }
 
 function color_diff($diff) {
