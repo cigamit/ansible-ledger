@@ -12,19 +12,59 @@ $host = '';
 $fact = '';
 $type = '';
 
-if (isset($_GET['host']) && intval($_GET['host']) == $_GET['host'] && isset($hosts[$_GET['host']])) {
-	$host = intval($_GET['host']);
-	$filters[] = " `host` = $host";
+if (isset($_GET['clear'])) {
+	unset($_SESSION['facts_host']);
+	unset($_SESSION['facts_fact']);
+	unset($_SESSION['facts_type']);
+	header("Location: /facts/");
+	exit;
 }
 
-if (isset($_GET['fact']) && in_array($_GET['fact'], $ufacts)) {
-	$fact = $_GET['fact'];
-	$filters[] = " `fact` = '$fact'";
+if (isset($_GET['host'])) {
+	if (intval($_GET['host']) == $_GET['host'] && isset($hosts[$_GET['host']])) {
+		$_SESSION['facts_host'] = intval($_GET['host']);
+	} else {
+		unset($_SESSION['facts_host']);
+	}
+	header("Location: /facts/");
+	exit;
 }
 
-if (isset($_GET['type']) && in_array($_GET['type'], $types)) {
-	$type = $_GET['type'];
-	$filters[] = " `type` = '$type'";
+if (isset($_GET['fact'])) {
+	if (in_array($_GET['fact'], $ufacts)) {
+		$_SESSION['facts_fact'] = $_GET['fact'];
+	} else {
+		unset($_SESSION['facts_fact']);
+	}
+	header("Location: /facts/");
+	exit;
+}
+
+if (isset($_GET['type'])) {
+	if (in_array($_GET['type'], $types)) {
+		$_SESSION['facts_type'] = $_GET['type'];
+	} else {
+		unset($_SESSION['facts_type']);
+	}
+	header("Location: /facts/");
+	exit;
+}
+
+// Create filters
+if (isset($_SESSION['facts_host']) && $_SESSION['facts_host'] != '') {
+	$filters[] = " `host` = " . $_SESSION['facts_host'];
+	$host = $_SESSION['facts_host'];
+}
+
+if (isset($_SESSION['facts_fact']) && $_SESSION['facts_fact'] != '') {
+	$filters[] = " `fact` = '" . $_SESSION['facts_fact'] . "'";
+	$fact = $_SESSION['facts_fact'];
+}
+
+
+if (isset($_SESSION['facts_type']) && $_SESSION['facts_type'] != '') {
+	$filters[] = " `type` = '" . $_SESSION['facts_type'] . "'";
+	$type = $_SESSION['facts_type'];
 }
 
 $h = array();

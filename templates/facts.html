@@ -34,7 +34,7 @@
 						</select>
 					</div>
 					<div class="col">
-						<a href=/facts/><button type="button" class="btn btn-primary btn-s">Clear</button></a>
+						<a href=/facts/?clear=1><button type="button" class="btn btn-primary btn-s">Clear</button></a>
 					</div>
 				</div>
 			</div>
@@ -72,26 +72,33 @@
 
 	$(".chosen-select").chosen({ allow_single_deselect:true, search_contains: true });
 
-	function change_filter () {
+	function change_host_filter () {
 		var host = $("#hosts").find(":selected").attr("id");
-		var fact = $("#facts").find(":selected").val();
-		var type = $("#type").find(":selected").val();
-
 		if (host == undefined) {
 			host = "";
 		}
+		window.location = "/facts/?host=" + host;
+	}
+
+	function change_fact_filter () {
+		var fact = $("#facts").find(":selected").val();
 		if (fact == undefined) {
 			fact = "";
 		}
+		window.location = "/facts/?fact=" + fact;
+	}
+
+	function change_type_filter () {
+		var type = $("#type").find(":selected").val();
 		if (type == undefined) {
 			type = "";
 		}
-		window.location = "/facts/?host=" + host + "&fact=" + fact + "&type=" + type;
+		window.location = "/facts/?type=" + type;
 	}
 
-	$("#hosts").change(change_filter);
-	$("#facts").change(change_filter);
-	$("#type").change(change_filter);
+	$("#hosts").change(change_host_filter);
+	$("#facts").change(change_fact_filter);
+	$("#type").change(change_type_filter);
 
 	$('.datatable-changes').DataTable({
 		order: [[1, 'asc']],
