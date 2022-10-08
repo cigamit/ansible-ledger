@@ -16,12 +16,12 @@ $disable_email = read_setting('disable_email', 0);
 
 $imp = (isset($_SESSION['imp']) && intval($_SESSION['imp']) ? $_SESSION['imp'] : 0); 
 // REMOVE ME
-$is_dev = true;
+$is_dev = read_setting('is_dev', 0);;
 if ($is_dev) {
 	$twig->addExtension(new Twig_Extension_Debug());
 } else {
 	$twig = new Twig_Environment($loader, array(
-	    'cache' => 'twig/cache',
+	    'cache' => '../cache',
 	));
 }
 
