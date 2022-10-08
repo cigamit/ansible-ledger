@@ -16,7 +16,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save') {
 
 	$cpass = $_POST['cpass'];
 	if ($cpass != '') {
-		if (sha1($cpass) == $user->password) {
+		if (hash('sha256', $cpass) == $user->password) {
 			$newpass = $_POST['newpass'];
 			$newpass2 = $_POST['newpass2'];
 			if ($newpass != '' && strlen($newpass) > 7 && $newpass == $newpass2) {

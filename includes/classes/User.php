@@ -44,7 +44,7 @@ class User {
 	}
 
 	function set_password($password) {
-		$this->password = sha1($password);
+		$this->password = hash('sha256', $password);
 	}
 
 	function set_username($username) {

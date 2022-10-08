@@ -142,7 +142,7 @@ function check_user_password($username, $pass) {
 	$user = new User();
 	$account = $user->retrieve_by_username($username);
 	if ($user->id && $user->enabled) {
-		if (sha1($pass) == $user->password) {
+		if (hash('sha256', $pass) == $user->password) {
 			return true;	
 		}
 	}
