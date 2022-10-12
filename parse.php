@@ -126,7 +126,7 @@ function clean_null_args($inv) {
 }
 
 function create_diff($res) {
-	$from = $to = (isset($res[1]['before_header']) ? $res[1]['before_header'] : '');
+	$from = $to = (isset($res[0]['before_header']) ? $res[0]['before_header'] : '');
 
 	$builder = new StrictUnifiedDiffOutputBuilder([
 		'collapseRanges'      => true, // ranges of length one are rendered with the trailing `,1`
