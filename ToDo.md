@@ -7,7 +7,7 @@
 - Add setting so we only receive data from Trusted Servers
 
 ## Reports
-- Add permissions (single user and team)
+- Add permissions (team)
 - Add schedule for reports (email out)
 - Fix selecting multiple facts for a column
 

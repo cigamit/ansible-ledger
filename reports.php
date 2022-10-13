@@ -10,6 +10,27 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && $_GET['report'] == 
 	exit;
 }
 
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'adduserperm' && $_REQUEST['report'] == intval($_REQUEST['report']) && intval($_REQUEST['report'])) {
+	$report = new Report(intval($_REQUEST['report']));
+	if ($report->id) {
+		$user = intval($_REQUEST['user']);
+		$role = $_REQUEST['role'];
+		$report->add_user($user, $role);
+		Header("Location: /reports/perms/" . intval($_REQUEST['report']) . "\n\n");
+		exit;
+	}
+}
+
+if (isset($_GET['action']) && $_GET['action'] == 'removeuserperm' && $_GET['report'] == intval($_GET['report']) && intval($_GET['report'])) {
+	$report = new Report(intval($_REQUEST['report']));
+	if ($report->id) {
+		$user = intval($_GET['user']);
+		$report->remove_user($user);
+		Header("Location: /reports/perms/" . intval($_GET['report']) . "\n\n");
+		exit;
+	}
+}
+
 if (isset($_GET['action']) && $_GET['action'] == 'new') {
 	$report = new Report();
 	$report->set_owner($account['id']);
@@ -110,21 +131,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'addcolumn' && $_POST['report
 	}
 }
 
-if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit' && $_REQUEST['report'] == intval($_REQUEST['report']) && intval($_REQUEST['report'])) {
-	$report = db_fetch_assoc_prepare('SELECT * FROM reports WHERE `id` = ?', array(intval($_REQUEST['report'])));
-	if (isset($report['id'])) {
-		$allfacts = db_fetch_assocs('SELECT DISTINCT `fact` FROM facts');
-		$facts = array();
-		foreach ($allfacts as $f) {
-			$facts[] = $f['fact'];
-		}
-
-		$filters = @unserialize(base64_decode($report['filters']));
-		$columns = @unserialize(base64_decode($report['columns']));
-		echo $twig->render('report_edit.html', array_merge($twigarr, array('report' => $report, 'facts' => $facts, 'filters' => $filters, 'columns' => $columns, 'compares' => $compares)));
-		exit;
-	}
-}
 
 if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'view' && $_REQUEST['report'] == intval($_REQUEST['report']) && intval($_REQUEST['report'])) {
 	$report = new Report(intval($_REQUEST['report']));
@@ -181,12 +187,40 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'view' && $_REQUEST['re
 	}
 }
 
+$users = reindex_arr_by_id_col(db_fetch_assocs('SELECT `id`, `name` FROM `users`'), 'name');
+
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'perms' && $_REQUEST['report'] == intval($_REQUEST['report']) && intval($_REQUEST['report'])) {
+	$report = db_fetch_assoc_prepare('SELECT * FROM reports WHERE `id` = ?', array(intval($_REQUEST['report'])));
+	if (isset($report['id'])) {
+		$perms = reindex_arr_by_col(db_fetch_assocs_prepare('SELECT * FROM `reports_perms` WHERE `report` = ?', array($report['id'])), 'user');
+		$roles = array('owner' => 'Owner', 'edit' => 'Editor', 'view' => 'Viewer');
+		echo $twig->render('report_perms.html', array_merge($twigarr, array('report' => $report, 'perms' => $perms, 'users' => $users, 'roles' => $roles)));
+		exit;
+	}
+}
+
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit' && $_REQUEST['report'] == intval($_REQUEST['report']) && intval($_REQUEST['report'])) {
+	$report = db_fetch_assoc_prepare('SELECT * FROM reports WHERE `id` = ?', array(intval($_REQUEST['report'])));
+	if (isset($report['id'])) {
+		$allfacts = db_fetch_assocs('SELECT DISTINCT `fact` FROM facts');
+		$facts = array();
+		foreach ($allfacts as $f) {
+			$facts[] = $f['fact'];
+		}
+
+		$filters = @unserialize(base64_decode($report['filters']));
+		$columns = @unserialize(base64_decode($report['columns']));
+		echo $twig->render('report_edit.html', array_merge($twigarr, array('report' => $report, 'facts' => $facts, 'filters' => $filters, 
+				'columns' => $columns, 'compares' => $compares)));
+		exit;
+	}
+}
+
 $reports = db_fetch_assocs_prepare("SELECT `reports`.*, `reports_perms`.`role` FROM `reports`
 							LEFT JOIN `reports_perms` ON `reports_perms`.`report` = `reports`.`id`
 							WHERE `reports_perms`.`user` = ?
 							ORDER BY `reports`.`name`", array($account['id']));
 
-$users = reindex_arr_by_id_col(db_fetch_assocs('SELECT `id`, `name` FROM `users`'), 'name');
 
 echo $twig->render('reports.html', array_merge($twigarr, array('reports' => $reports, 'users' => $users, 'compares' => $compares)));
 

@@ -60,6 +60,18 @@ function reindex_arr_by_id($a) {
 	return $d;
 }
 
+function reindex_arr_by_col($a, $c) {
+	$d = array();
+
+	if (!empty($a)) {
+		foreach ($a as $b) {
+			$d[$b[$c]] = $b;
+		}
+	}
+
+	return $d;
+}
+
 function reindex_arr_by_id_col($a, $c) {
 	$d = array();
 

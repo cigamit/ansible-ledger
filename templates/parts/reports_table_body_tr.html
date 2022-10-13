@@ -1,8 +1,11 @@
 <tr>
-	<td width=30>
+	<td width=60>
 		{% if r.role == "owner" or r.role == "admin" or r.role == "edit" %}
 			<a href='/reports/edit/{{ r['id'] }}' class="btn btn-primary btn-xs"  type="button" name=edit id=edit><i class="fa fa-edit"></i></a>
-			{% endif %}
+		{% endif %}
+		{% if r.role == "owner" or r.role == "admin" or r.role == "edit" %}
+			<a href='/reports/perms/{{ r['id'] }}' class="btn btn-primary btn-xs"  type="button" name=edit id=edit><i class="fa fa-users"></i></a>
+		{% endif %}
 	</td>
 	<td><a href='/reports/view/{{ r['id'] }}'>{{ r['name'] }}</a></td>
 	<td>{{ users[r['owner']] }}</td>

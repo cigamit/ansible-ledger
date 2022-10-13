@@ -171,6 +171,19 @@ class Report {
 		$this->save();
 	}
 
+	function remove_user($user) {
+		if ($this->id) {
+			db_execute_prepare('DELETE FROM `reports_perms` WHERE `report` = ? AND `user` = ?', array($this->id, $user));
+		}
+	}
+
+	function add_user($user, $role) {
+		$roles = array('owner', 'edit', 'view');
+		if ($this->id && intval($user) && in_array($role, $roles)) {
+			db_execute_prepare('INSERT INTO `reports_perms` (`report`, `user`, `role`) VALUES (?, ?, ?)', array($this->id, intval($user), $role));
+		}
+	}
+
 	function clean_name($text) {
 		return preg_replace('/[^A-Za-z0-9 ]/', '', $text);
 	}

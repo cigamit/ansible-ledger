@@ -138,9 +138,13 @@
 							<br><button class="btn btn-primary btn-s" type="button" name=filtermb id=filtermb data-bs-toggle="modal" data-bs-target="#filtermodal">Add Filter</button>
 						</div>
 					</div>
+
 				</div>
 			</div>
 		</div>
+	</div>
+
+
 
     <div class="modal fade" id="columnmodal" tabindex="-1" aria-labelledby="columnmlabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -191,10 +195,10 @@
 
 			<div class="form-group"><label class="col-sm-3 control-label">Fact</label>
 			    <div class="col-sm-8">
-				<select class="form-control chosen-select" name=fact id=facts>
-			{% for f in facts %}
-			        <option>{{ f }}</option>
-			{% endfor %}
+					<select class="form-control chosen-select" name=fact id=facts>
+{% for f in facts %}
+			        	<option>{{ f }}</option>
+{% endfor %}
 			        </select>
 			    </div>
 			</div>
@@ -225,6 +229,8 @@
             </div>
         </div>
     </div>
+
+
 
 
 {% endblock %}
