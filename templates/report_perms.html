@@ -36,8 +36,6 @@
                         </div>
                     </div>
 
-                    
-
                     <div class="col">
                         <div class="row bd-example">
                             <div class="col">
@@ -131,7 +129,7 @@
                             <div class="form-group"><label class="col-sm-3 control-label">Team</label>
                                 <div class="col-sm-8">
                                     <select class="form-control chosen-select" name=team id=team>
-                {% for i,u in teams %}{% if i != report.owner and perms[i] is not defined %}
+                {% for i,u in teams %}{% if tperms[i] is not defined %}
                                         <option value="{{ i }}">{{ u }}</option>
                 {% endif %}{% endfor %}
                                     </select>
