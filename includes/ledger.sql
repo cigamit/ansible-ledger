@@ -66,6 +66,36 @@ CREATE TABLE `hosts` (
   KEY `hostname` (`hostname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `log_emails`;
+CREATE TABLE `log_emails` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` int(11) NOT NULL,
+  `to` tinytext NOT NULL,
+  `subject` varchar(64) NOT NULL,
+  `status` tinytext NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `date` (`date`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `mail_queue`;
+CREATE TABLE `mail_queue` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `created` int(11) NOT NULL DEFAULT 0,
+  `last_attempt` int(11) NOT NULL DEFAULT 0,
+  `attempts` int(11) NOT NULL DEFAULT 0,
+  `to` varchar(512) NOT NULL,
+  `from` varchar(64) NOT NULL,
+  `fromname` varchar(64) NOT NULL,
+  `subject` varchar(512) NOT NULL,
+  `message` text NOT NULL,
+  `error` text NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `created` (`created`),
+  KEY `last_attempt` (`last_attempt`),
+  KEY `status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `reports`;
 CREATE TABLE `reports` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -97,6 +127,26 @@ INSERT INTO `reports` (`id`, `owner`, `name`, `created`, `filters`, `columns`, `
 (1,	1,	'Linux Servers',	1663558186,	'YToxOntpOjA7YTozOntzOjQ6ImZhY3QiO3M6MTQ6ImFuc2libGVfc3lzdGVtIjtzOjc6ImNvbXBhcmUiO3M6MjoiZXEiO3M6NToidmFsdWUiO3M6NToiTGludXgiO319',	'YTo3OntzOjg6Ikhvc3RuYW1lIjtzOjE2OiJhbnNpYmxlX2hvc3RuYW1lIjtzOjEwOiJJUCBBZGRyZXNzIjtzOjI4OiJhbnNpYmxlX2RlZmF1bHRfaXB2NC5hZGRyZXNzIjtzOjY6IkRpc3RybyI7czoyMDoiYW5zaWJsZV9kaXN0cmlidXRpb24iO3M6MTQ6IkRpc3RybyBWZXJzaW9uIjtzOjI4OiJhbnNpYmxlX2Rpc3RyaWJ1dGlvbl92ZXJzaW9uIjtzOjE0OiJQeXRob24gVmVyc2lvbiI7czoyMjoiYW5zaWJsZV9weXRob25fdmVyc2lvbiI7czo0OiJDUFVzIjtzOjIzOiJhbnNpYmxlX3Byb2Nlc3Nvcl92Y3B1cyI7czo2OiJNZW1vcnkiO3M6MTk6ImFuc2libGVfbWVtdG90YWxfbWIiO30=',	0,	'asc'),
 (2,	1,	'Windows Servers',	1664418280,	'YToxOntpOjA7YTozOntzOjQ6ImZhY3QiO3M6MTc6ImFuc2libGVfb3NfZmFtaWx5IjtzOjc6ImNvbXBhcmUiO3M6MjoiZXEiO3M6NToidmFsdWUiO3M6NzoiV2luZG93cyI7fX0=',	'YTo2OntzOjg6Ikhvc3RuYW1lIjtzOjE2OiJhbnNpYmxlX2hvc3RuYW1lIjtzOjEwOiJJUCBBZGRyZXNzIjtzOjIyOiJhbnNpYmxlX2lwX2FkZHJlc3Nlcy4wIjtzOjEwOiJPUyBWZXJzaW9uIjtzOjIwOiJhbnNpYmxlX2Rpc3RyaWJ1dGlvbiI7czoxMDoiUG93ZXJzaGVsbCI7czoyNjoiYW5zaWJsZV9wb3dlcnNoZWxsX3ZlcnNpb24iO3M6NDoiQ1BVcyI7czoyMzoiYW5zaWJsZV9wcm9jZXNzb3JfdmNwdXMiO3M6NjoiTWVtb3J5IjtzOjE5OiJhbnNpYmxlX21lbXRvdGFsX21iIjt9',	0,	'asc');
 
+DROP TABLE IF EXISTS `reports_schedules`;
+CREATE TABLE `reports_schedules` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `report` int(11) NOT NULL,
+  `owner` int(11) NOT NULL,
+  `start` int(11) NOT NULL,
+  `repeat` int(11) NOT NULL,
+  `next` int(11) NOT NULL,
+  `process` int(11) NOT NULL DEFAULT 0,
+  `emails` tinytext NOT NULL,
+  `subject` varchar(256) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `report` (`report`),
+  KEY `owner` (`owner`),
+  KEY `next` (`next`),
+  KEY `process` (`process`),
+  KEY `enabled` (`enabled`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `sessions`;
 CREATE TABLE `sessions` (
   `id` varchar(32) NOT NULL,
@@ -105,7 +155,6 @@ CREATE TABLE `sessions` (
   `data` text DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (

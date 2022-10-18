@@ -2,7 +2,7 @@
 
 function stripUnwantedTagsAndAttrs($html_str){
 	$xml = new DOMDocument();
-  //Suppress warnings: proper error handling is beyond scope of example
+  //Suppress warnings: proper error handling is needed
 	libxml_use_internal_errors(false);
   //List the tags you want to allow here, NOTE you MUST allow html and body otherwise entire string will be cleared
 	$allowed_tags = array("b", "br", "em", "i", "li", "ol", "u", "ul", "p");
@@ -82,4 +82,100 @@ function reindex_arr_by_id_col($a, $c) {
 	}
 
 	return $d;
+}
+
+function build_filter($filters) {
+
+	$sql = "SELECT DISTINCT f.`host` FROM `facts` as f\n";
+	$p = array();
+	$c = 0;
+	foreach ($filters as $f) {
+		$c++;
+
+		$sql .= "INNER JOIN (SELECT * FROM `facts` WHERE `fact`= ? AND ";
+
+		$p[] = $f['fact'];
+		switch ($f['compare']) {
+			case 'eq':
+				$sql .= '`data` = ?';
+				$p[] = $f['value'];
+				break;
+			case 'ne':
+				$sql .= '`data` != ?';
+				$p[] = $f['value'];
+				break;
+			case 'gt':
+				$sql .= 'cast(`data` as signed) > ?';
+				$p[] = $f['value'];
+				break;
+			case 'lt':
+				$sql .= '`cast(data` as signed) < ?';
+				$p[] = $f['value'];
+				break;
+			case 'contains':
+				$sql .= '`data` LIKE ?';
+				$p[] = "%" . $f['value'] . "%";
+				break;
+			case 'starts':
+				$sql .= '`data` LIKE ?';
+				$p[] = "%" . $f['value'];
+				break;
+			case 'ends':
+				$sql .= '`data` LIKE ?';
+				$p[] = "%" . $f['value'];
+				break;
+		}
+		$sql .= ') as f' . $c . ' ON f.host = f' . $c . ".host\n";
+	}
+
+	return array($sql, $p);
+}
+
+function build_report ($id) {
+	$report = new Report($id);
+	if ($report->id) {
+		$w = build_filter($report->filters);
+		
+		$sql = $w[0];
+		$pr = $w[1];
+
+		$hosts = db_fetch_assocs_prepare($sql, $pr);
+    }
+
+    $data = array();
+    foreach ($hosts as $h) {
+        $facts = db_fetch_assocs_prepare('SELECT `fact`,`data` FROM `facts` WHERE `host` = ?', array($h['host']));
+        $x = 0;
+        $data[$h['host']] = array();
+        if (count($facts)) {
+            foreach ($report->columns as $d => $k) {
+                $data[$h['host']][$x] = '';
+                foreach ($facts as $f) {
+                    if (is_array($k)) {
+                        if (in_array($f['fact'], $k)) {
+                            if ($data[$h['host']][$x] != '') {
+                                $data[$h['host']][$x] .= ', ';
+                            }
+                            $data[$h['host']][$x] .= $f['data'];
+                        }
+                    } else {
+                        if ($k == $f['fact']) {
+                            $data[$h['host']][$x] = $f['data'];
+                        }
+                    }
+                }
+                $x++;
+            }
+        }
+        $e = true;
+        foreach ($data[$h['host']] as $d) {
+            if ($d != '') {
+                $e = false;
+            }
+        }
+        if ($e) {
+            unset($data[$h['host']]);
+        }
+    }
+    return $data;
 }

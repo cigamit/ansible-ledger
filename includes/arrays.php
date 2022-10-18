@@ -7,3 +7,4 @@ $yn = array(
 	1 => 'Yes'
 );
 
+$reoccur = array(86400 => 'Daily', 604800 => 'Weekly', 2538000 => 'Monthly');

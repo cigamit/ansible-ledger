@@ -19,10 +19,15 @@ class Report {
 
 	function retrieve($id) {
 		global $account;
-		$u = db_fetch_assoc_prepare("SELECT `reports`.*, `reports_perms`.`role` FROM `reports`
-							LEFT JOIN `reports_perms` ON `reports_perms`.`report` = `reports`.`id`
-							WHERE `reports_perms`.`user` = ? AND `reports`.`id` = ?
-							ORDER BY `reports`.`name`", array($account['id'], $id));
+
+		if (isset($account['cli'])) {
+			$u = db_fetch_assoc_prepare("SELECT * FROM `reports` WHERE `reports`.`id` = ?", array($id));
+		} else {
+			$u = db_fetch_assoc_prepare("SELECT `reports`.*, `reports_perms`.`role` FROM `reports`
+								LEFT JOIN `reports_perms` ON `reports_perms`.`report` = `reports`.`id`
+								WHERE `reports_perms`.`user` = ? AND `reports`.`id` = ?
+								ORDER BY `reports`.`name`", array($account['id'], $id));
+		}
 		$this->pop_class($u);
 		return $u;
 	}
@@ -69,7 +74,7 @@ class Report {
 			$this->columns = unserialize(base64_decode($u['columns']));
 			$this->sortc   = $u['sortc'];
 			$this->sortd   = $u['sortd'];
-			$this->role    = $u['role'];
+			$this->role    = (isset($u['role']) ? $u['role'] : 'view');
 		}
 	}
 

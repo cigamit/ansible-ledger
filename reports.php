@@ -77,50 +77,47 @@ if (isset($_REQUEST['action'])) {
 					$roles = array('owner' => 'Owner', 'edit' => 'Editor', 'view' => 'Viewer');
 					echo $twig->render('report_perms.html', array_merge($twigarr, array('report' => $report, 'perms' => $perms, 'users' => $users, 'roles' => $roles)));
 					exit;
-				case 'view':
-					$w = build_filter($report->filters);
-					
-					$sql = $w[0];
-					$pr = $w[1];
-			
-					$hosts = db_fetch_assocs_prepare($sql, $pr);
-			
-					$data = array();
-					foreach ($hosts as $h) {
-						$facts = db_fetch_assocs_prepare('SELECT `fact`,`data` FROM `facts` WHERE `host` = ?', array($h['host']));
-						$x = 0;
-						$data[$h['host']] = array();
-						if (count($facts)) {
-							foreach ($report->columns as $d => $k) {
-								$data[$h['host']][$x] = '';
-								foreach ($facts as $f) {
-									if (is_array($k)) {
-										if (in_array($f['fact'], $k)) {
-											if ($data[$h['host']][$x] != '') {
-												$data[$h['host']][$x] .= ', ';
-											}
-											$data[$h['host']][$x] .= $f['data'];
-										}
-									} else {
-										if ($k == $f['fact']) {
-											$data[$h['host']][$x] = $f['data'];
-										}
-									}
-								}
-								$x++;
-							}
-						}
-						$e = true;
-						foreach ($data[$h['host']] as $d) {
-							if ($d != '') {
-								$e = false;
-							}
-						}
-						if ($e) {
-							unset($data[$h['host']]);
-						}
+				case 'schedules':
+					if ($account['super']) {
+						$schedules = db_fetch_assocs_prepare('SELECT * FROM `reports_schedules` WHERE `report` = ?', array($report->id));
+					} else {
+						$schedules = db_fetch_assocs_prepare('SELECT * FROM `reports_schedules` WHERE `report` = ? AND `owner` = ?', array($report->id, $account['id']));
 					}
-			
+					echo $twig->render('report_schedules.html', array_merge($twigarr, array('report' => $report, 'schedules' => $schedules, 'reoccur' => $reoccur, 'users' => $users)));
+					exit;
+				case 'schedulesave':
+					if (isset($_GET['schedule'])) {
+						$sid = intval($_GET['schedule']);
+						$start = strtotime($_POST['start']);
+						$enabled = (isset($_POST['enabled']) ? 1 : 0);
+						$repeat = (isset($reoccur[$_POST['repeat']]) ? intval($_POST['repeat']) : 86400);
+						$next = $start;
+						while ($next < time()) {
+							$next += $repeat;
+						}
+						$emails = sql_clean_ans($_POST['emails']);
+						if ($sid == 0) {
+							
+						} else {
+							db_execute_prepare('UPDATE `reports_schedules` SET `start` = ?, `enabled` = ?, `repeat` = ?, `next` = ?, `emails` = ? WHERE `id` = ?',
+							array($start, $enabled, $repeat, $next, $emails, $sid));
+						}
+						Header("Location: /reports/" . $report->id . "/schedule/\n\n");
+					}
+					exit;
+				case 'scheduleedit':
+					if (isset($_GET['schedule'])) {
+						$s_id = intval($_GET['schedule']);
+						if ($account['super']) {
+							$schedule = db_fetch_assoc_prepare('SELECT * FROM `reports_schedules` WHERE `report` = ? AND `id` = ?', array($report->id, $s_id));
+						} else {
+							$schedule = db_fetch_assoc_prepare('SELECT * FROM `reports_schedules` WHERE `report` = ? AND `id` = ? AND `owner` = ?', array($report->id, $s_id, $account['id']));
+						}
+						echo $twig->render('report_schedule_edit.html', array_merge($twigarr, array('report' => $report, 'schedule' => $schedule, 'reoccur' => $reoccur, 'users' => $users)));
+					}
+					exit;
+				case 'view':
+					$data = build_report ($report->id);
 					echo $twig->render('report.html', array_merge($twigarr, array('report' => $report, 'data' => $data, 'filters' => $report->filters, 'columns' => $report->columns, 'sortc' => $report->sortc, 'sortd' => $report->sortd)));
 					exit;
 				case 'edit':

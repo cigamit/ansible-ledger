@@ -1,5 +1,9 @@
 <?php
 
+if (php_sapi_name() != 'cli') {
+	exit;
+}
+
 chdir(dirname(getcwd()));
 
 require_once('includes/version.php');

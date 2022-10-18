@@ -9,7 +9,6 @@
 ## Reports
 - Add permissions (team)
 - Add schedule for reports (email out)
-- Fix selecting multiple facts for a column
 
 ## Changes
 - Add permission on who can see changes (kinda hard to do this per host)

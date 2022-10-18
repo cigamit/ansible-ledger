@@ -25,4 +25,10 @@ if ($is_dev) {
 	));
 }
 
-$twigarr = array('account' => $account, 'request_scheme' => $_SERVER['REQUEST_SCHEME'], 'server_name' => $_SERVER['SERVER_NAME'], 'server' => $_SERVER['PHP_SELF'], 'is_dev' => $is_dev, 'disable_email' => $disable_email, 'imp' => $imp, 'version' => VERSION, 'base_url' => BASE_URL);
+if (!isset($account['id'])) {
+	$account = array('id' => 0);
+}
+
+$twigarr = array('account' => $account, 'request_scheme' => (isset($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : 'cli'), 
+				'server_name' => (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : ''), 'server' => (isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : ''), 
+				'is_dev' => $is_dev, 'disable_email' => $disable_email, 'imp' => $imp, 'version' => VERSION, 'base_url' => BASE_URL);
