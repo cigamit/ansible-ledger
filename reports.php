@@ -129,7 +129,9 @@ if (isset($_REQUEST['action'])) {
 												VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
 												array($report->id, $start, $enabled, $repeat, $next, $emails, $account['id'], $subject));
 					} else {
-						if (!$account['super']) {
+						if ($account['super']) {
+							$schedule = db_fetch_assoc_prepare('SELECT * FROM `reports_schedules` WHERE `id` = ?', array($sid));
+						} else {
 							$schedule = db_fetch_assoc_prepare('SELECT * FROM `reports_schedules` WHERE `owner` = ? AND `id` = ?', array($account['id'], $sid));
 						}
 						if (isset($schedule['id'])) {
