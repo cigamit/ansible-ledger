@@ -9,73 +9,97 @@ if (isset($_REQUEST['action'])) {
 		if ($report->id) {
 			switch ($_REQUEST['action']) {
 				case 'delete':
-					$report->delete();
+					if ($report->owner == $account['id'] || $account['super']) {
+						$report->delete();
+					}
 					Header("Location: /reports/\n\n");
 					exit;
 				case 'adduserperm':
-					$user = intval($_POST['user']);
-					$role = $_POST['role'];
-					$report->add_user($user, $role);
+					if ($report->owner == $account['id'] || $account['super']) {
+						$user = intval($_POST['user']);
+						$role = $_POST['role'];
+						$report->add_user($user, $role);
+					}
 					Header("Location: /reports/perms/" . $report->id . "\n\n");
 					exit;
 				case 'removeuserperm':
-					$user = intval($_GET['user']);
-					$report->remove_user($user);
+					if ($report->owner == $account['id'] || $account['super']) {
+						$user = intval($_GET['user']);
+						$report->remove_user($user);
+					}
 					Header("Location: /reports/perms/" . $report->id . "\n\n");
 					exit;
 				case 'savesort':
-					$sortc = intval($_POST['sortc']);
-					$sortd = $_POST['sortd'];
-					$report->set_sortc($sortc);
-					$report->set_sortd($sortd);
-					$report->save();
+					if ($report->owner == $account['id'] || $account['super']) {
+						$sortc = intval($_POST['sortc']);
+						$sortd = $_POST['sortd'];
+						$report->set_sortc($sortc);
+						$report->set_sortd($sortd);
+						$report->save();
+					}
 					Header("Location: /reports/edit/" . $report->id . "\n\n");
 					exit;
 				case 'savename':
-					$name = sql_clean_ans($_POST['name']);
-					$report->set_name($name);
-					$report->save();
+					if ($report->owner == $account['id'] || $account['super']) {
+						$name = sql_clean_ans($_POST['name']);
+						$report->set_name($name);
+						$report->save();
+					}
 					Header("Location: /reports/edit/" . $report->id . "\n\n");
 					exit;
 				case 'deletefilter':
-					$filter = intval($_GET['filter']);
-					$report->remove_filter($filter);
+					if ($report->owner == $account['id'] || $report->role == 'editor' || $account['super']) {
+						$filter = intval($_GET['filter']);
+						$report->remove_filter($filter);
+					}
 					Header("Location: /reports/edit/" . $report->id . "\n\n");
 					exit;
 				case 'addfilter':
-					$value = $_POST['value'];
-					$compare = $_POST['compare'];
-					$fact = $_POST['fact'];
-					$report->add_filter($fact, $compare, $value);
+					if ($report->owner == $account['id'] || $report->role == 'editor' || $account['super']) {
+						$value = $_POST['value'];
+						$compare = $_POST['compare'];
+						$fact = $_POST['fact'];
+						$report->add_filter($fact, $compare, $value);
+					}
 					Header("Location: /reports/edit/" . $report->id . "\n\n");
 					exit;
 				case 'moveup':
-					$fact = intval($_GET['fact']);
-					$report->move_column_up($fact);
+					if ($report->owner == $account['id'] || $report->role == 'editor' || $account['super']) {
+						$fact = intval($_GET['fact']);
+						$report->move_column_up($fact);
+					}
 					Header("Location: /reports/edit/" . $report->id . "\n\n");
 					exit;
 				case 'movedown':
-					$fact = intval($_GET['fact']);
-					$report->move_column_down($fact);
+					if ($report->owner == $account['id'] || $report->role == 'editor' || $account['super']) {
+						$fact = intval($_GET['fact']);
+						$report->move_column_down($fact);
+					}
 					Header("Location: /reports/edit/" . $report->id . "\n\n");
 					exit;
 				case 'deletefact':
-					$fact = intval($_GET['fact']);
-					$report->remove_column($fact);
+					if ($report->owner == $account['id'] || $report->role == 'editor' || $account['super']) {
+						$fact = intval($_GET['fact']);
+						$report->remove_column($fact);
+					}
 					Header("Location: /reports/edit/" . $report->id . "\n\n");
 					exit;
 				case 'addcolumn':
-					$display = sql_clean_ans($_POST['display']);
-					if ($display != '') {
-						$facts = (isset($_POST['facts']) ? $_POST['facts'] : array());
-						$report->add_column($display, $facts);
+					if ($report->owner == $account['id'] || $report->role == 'editor' || $account['super']) {
+						$display = sql_clean_ans($_POST['display']);
+						if ($display != '') {
+							$facts = (isset($_POST['facts']) ? $_POST['facts'] : array());
+							$report->add_column($display, $facts);
+						}
 					}
 					Header("Location: /reports/edit/" . $report->id . "\n\n");
 					exit;
 				case 'perms':
-					$perms = reindex_arr_by_col(db_fetch_assocs_prepare('SELECT * FROM `reports_perms` WHERE `report` = ?', array($report->id)), 'user');
-					$roles = array('owner' => 'Owner', 'edit' => 'Editor', 'view' => 'Viewer');
-					echo $twig->render('report_perms.html', array_merge($twigarr, array('report' => $report, 'perms' => $perms, 'users' => $users, 'roles' => $roles)));
+					if ($report->owner == $account['id'] || $account['super']) {
+						$perms = reindex_arr_by_col(db_fetch_assocs_prepare('SELECT * FROM `reports_perms` WHERE `report` = ?', array($report->id)), 'user');
+						$roles = array('owner' => 'Owner', 'edit' => 'Editor', 'view' => 'Viewer');
+						echo $twig->render('report_perms.html', array_merge($twigarr, array('report' => $report, 'perms' => $perms, 'users' => $users, 'roles' => $roles)));
+					}
 					exit;
 				case 'schedules':
 					if ($account['super']) {
@@ -88,31 +112,60 @@ if (isset($_REQUEST['action'])) {
 				case 'schedulesave':
 					if (isset($_GET['schedule'])) {
 						$sid = intval($_GET['schedule']);
-						$start = strtotime($_POST['start']);
-						$enabled = (isset($_POST['enabled']) ? 1 : 0);
-						$repeat = (isset($reoccur[$_POST['repeat']]) ? intval($_POST['repeat']) : 86400);
-						$next = $start;
-						while ($next < time()) {
-							$next += $repeat;
-						}
-						$emails = sql_clean_ans($_POST['emails']);
-						if ($sid == 0) {
-							
-						} else {
-							db_execute_prepare('UPDATE `reports_schedules` SET `start` = ?, `enabled` = ?, `repeat` = ?, `next` = ?, `emails` = ? WHERE `id` = ?',
-							array($start, $enabled, $repeat, $next, $emails, $sid));
-						}
-						Header("Location: /reports/" . $report->id . "/schedule/\n\n");
+					} else {
+						$sid = 0;
 					}
+					$subject = sql_clean_ans($_POST['subject']);
+					$start = strtotime($_POST['start']);
+					$enabled = (isset($_POST['enabled']) ? 1 : 0);
+					$repeat = (isset($reoccur[$_POST['repeat']]) ? intval($_POST['repeat']) : 86400);
+					$next = $start;
+					while ($next < time()) {
+						$next += $repeat;
+					}
+					$emails = sql_clean_ans($_POST['emails']);
+					if ($sid == 0) {
+						db_execute_prepare('INSERT INTO `reports_schedules` (`report`, `start`, `enabled`, `repeat`, `next`, `emails`, `owner`, `subject`)
+												VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+												array($report->id, $start, $enabled, $repeat, $next, $emails, $account['id'], $subject));
+					} else {
+						if (!$account['super']) {
+							$schedule = db_fetch_assoc_prepare('SELECT * FROM `reports_schedules` WHERE `owner` = ? AND `id` = ?', array($account['id'], $sid));
+						}
+						if (isset($schedule['id'])) {
+							db_execute_prepare('UPDATE `reports_schedules` SET `start` = ?, `enabled` = ?, `repeat` = ?, `next` = ?, `emails` = ?, `subject` = ? WHERE `id` = ?',
+							array($start, $enabled, $repeat, $next, $emails, $subject, $sid));
+						}
+					}
+					Header("Location: /reports/" . $report->id . "/schedule/\n\n");
+					exit;
+				case 'scheduledelete':
+					if (isset($_GET['schedule'])) {
+						$sid = intval($_GET['schedule']);
+						if ($account['super']) {
+							db_execute_prepare('DELETE FROM `reports_schedules` WHERE `id` = ?', array($sid));
+						} else {
+							db_execute_prepare('DELETE FROM `reports_schedules` WHERE `id` = ? AND `owner` = ?', array($sid, $account['id']));
+						}
+					}
+					Header("Location: /reports/" . $report->id . "/schedule/\n\n");
 					exit;
 				case 'scheduleedit':
 					if (isset($_GET['schedule'])) {
-						$s_id = intval($_GET['schedule']);
+						$sid = intval($_GET['schedule']);
 						if ($account['super']) {
-							$schedule = db_fetch_assoc_prepare('SELECT * FROM `reports_schedules` WHERE `report` = ? AND `id` = ?', array($report->id, $s_id));
+							$schedule = db_fetch_assoc_prepare('SELECT * FROM `reports_schedules` WHERE `report` = ? AND `id` = ?', array($report->id, $sid));
 						} else {
-							$schedule = db_fetch_assoc_prepare('SELECT * FROM `reports_schedules` WHERE `report` = ? AND `id` = ? AND `owner` = ?', array($report->id, $s_id, $account['id']));
+							$schedule = db_fetch_assoc_prepare('SELECT * FROM `reports_schedules` WHERE `report` = ? AND `id` = ? AND `owner` = ?', array($report->id, $sid, $account['id']));
 						}
+						if (isset($schedule['id'])) {
+							echo $twig->render('report_schedule_edit.html', array_merge($twigarr, array('report' => $report, 'schedule' => $schedule, 'reoccur' => $reoccur, 'users' => $users)));
+						}
+					}
+					exit;
+				case 'schedulenew':
+					if ($report->owner == $account['id'] || $report->role == 'editor' || $account['super']) {
+						$schedule = array('id' => 0, 'subject' => 'New Report', 'enabled' => 1, 'start' => time(), 'repeat' => 86400, 'emails' => $account['email']);
 						echo $twig->render('report_schedule_edit.html', array_merge($twigarr, array('report' => $report, 'schedule' => $schedule, 'reoccur' => $reoccur, 'users' => $users)));
 					}
 					exit;
@@ -121,13 +174,15 @@ if (isset($_REQUEST['action'])) {
 					echo $twig->render('report.html', array_merge($twigarr, array('report' => $report, 'data' => $data, 'filters' => $report->filters, 'columns' => $report->columns, 'sortc' => $report->sortc, 'sortd' => $report->sortd)));
 					exit;
 				case 'edit':
-					$allfacts = db_fetch_assocs('SELECT DISTINCT `fact` FROM facts');
-					$facts = array();
-					foreach ($allfacts as $f) {
-						$facts[] = $f['fact'];
+					if ($report->owner == $account['id'] || $report->role == 'editor' || $account['super']) {
+						$allfacts = db_fetch_assocs('SELECT DISTINCT `fact` FROM facts');
+						$facts = array();
+						foreach ($allfacts as $f) {
+							$facts[] = $f['fact'];
+						}
+						echo $twig->render('report_edit.html', array_merge($twigarr, array('report' => $report, 'facts' => $facts, 'filters' => $report->filters, 
+								'columns' => $report->columns, 'compares' => $compares)));
 					}
-					echo $twig->render('report_edit.html', array_merge($twigarr, array('report' => $report, 'facts' => $facts, 'filters' => $report->filters, 
-							'columns' => $report->columns, 'compares' => $compares)));
 					exit;
 			}
 		} else {
