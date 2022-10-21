@@ -24,7 +24,7 @@ if (isset($d['logger_name'])) {
 		case 'awx.analytics.job_events':
 			// JOB EVENT DATA
 			if (isset($d['event_data']['res']['ansible_facts'])) {
-				if (isset($d['host_name'])) {
+				if (isset($d['host_name']) && strtolower($d['host_name']) != 'localhost') {
 					$f = $d['event_data']['res']['ansible_facts'];
 					$t = $d['event_data']['task_action'];
 					$fs = parse_facts($f);
@@ -82,15 +82,17 @@ if (isset($d['logger_name'])) {
 				}
 
 				$h = check_host($d['host_name']);
-				$role = (isset($d['role']) ? $d['role'] : '');
-				$res = Yaml::dumper($d['event_data']['res']);
-				db_execute_prepare('INSERT INTO `changes` (`host`, `time`, `job`, `playbook`, `play`, `role`, `task`, `task_action`, `res`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-					array($h, time(), $d['job'], $d['playbook'], $d['play'], $role, $d['task'], $d['event_data']['task_action'], $res));
+				if ($h) {
+					$role = (isset($d['role']) ? $d['role'] : '');
+					$res = Yaml::dumper($d['event_data']['res']);
+					db_execute_prepare('INSERT INTO `changes` (`host`, `time`, `job`, `playbook`, `play`, `role`, `task`, `task_action`, `res`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+						array($h, time(), $d['job'], $d['playbook'], $d['play'], $role, $d['task'], $d['event_data']['task_action'], $res));
+				}
 			}
 			break;
 		case 'awx.analytics.activity_stream':
 			// JOB DATA
-			if (isset($d['operation']) && $d['operation'] == 'create' && isset($d['object1']) && $d['object1'] == 'job') {
+			if (isset($d['operation']) && $d['operation'] == 'create' && isset($d['object1']) && $d['object1'] == 'job' && strtolower($d['host']) != 'localhost') {
 				include_once('includes/sql.php');
 
 //file_put_contents('jobs.txt', print_r($d, true), FILE_APPEND);
@@ -178,6 +180,9 @@ function parse_facts ($f, $fs = array(), $n = '') {
 }
 
 function check_host ($host) {
+	if (strtolower($host) == 'localhost') {
+		return false;
+	}
 	$h = db_fetch_assoc_prepare('SELECT id FROM hosts WHERE hostname = ?', array(strtolower($host)));
 	$time = time();
 	if (isset($h['id'])) {
